@@ -1,0 +1,9 @@
+{
+	"name": "MOCK-MODULE-ADF",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "525dcd36-5987-4642-a7a9-937a33aa173c",
+		"tenantId": "17dcec91-66ec-4c4b-a988-473694df546c"
+	}
+}
