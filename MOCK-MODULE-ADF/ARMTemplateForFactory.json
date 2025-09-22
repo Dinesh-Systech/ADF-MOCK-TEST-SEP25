@@ -1,0 +1,36 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "MOCK-MODULE-ADF"
+		},
+		"SHIR-OnPrem-SQL_properties_typeProperties_linkedInfo_resourceId": {
+			"type": "string",
+			"defaultValue": "/subscriptions/59e657a7-96dd-4c1a-901f-179904716089/resourcegroups/Internship_June_2025/providers/Microsoft.DataFactory/factories/internadfbootcamp2025/integrationruntimes/SHIR-OnPrem"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/SHIR-OnPrem-SQL')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"description": "Server: SSIC-SQL-01 \nOn Prem SQL server",
+				"typeProperties": {
+					"linkedInfo": {
+						"resourceId": "[parameters('SHIR-OnPrem-SQL_properties_typeProperties_linkedInfo_resourceId')]",
+						"authorizationType": "Rbac"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
