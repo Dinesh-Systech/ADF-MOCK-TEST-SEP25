@@ -1,0 +1,13 @@
+{
+	"name": "SHIR-OnPrem-SQL",
+	"properties": {
+		"type": "SelfHosted",
+		"description": "Server: SSIC-SQL-01 \nOn Prem SQL server",
+		"typeProperties": {
+			"linkedInfo": {
+				"resourceId": "/subscriptions/59e657a7-96dd-4c1a-901f-179904716089/resourcegroups/Internship_June_2025/providers/Microsoft.DataFactory/factories/internadfbootcamp2025/integrationruntimes/SHIR-OnPrem",
+				"authorizationType": "Rbac"
+			}
+		}
+	}
+}
