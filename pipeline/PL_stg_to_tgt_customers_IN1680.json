@@ -1,0 +1,9 @@
+{
+	"name": "PL_stg_to_tgt_customers_IN1680",
+	"properties": {
+		"folder": {
+			"name": "stg_to_tgt"
+		},
+		"annotations": []
+	}
+}
