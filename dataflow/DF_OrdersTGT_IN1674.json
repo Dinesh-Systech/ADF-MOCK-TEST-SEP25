@@ -1,0 +1,17 @@
+{
+	"name": "DF_OrdersTGT_IN1674",
+	"properties": {
+		"folder": {
+			"name": "STG_to_TGT"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				""
+			]
+		}
+	}
+}

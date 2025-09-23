@@ -1,0 +1,17 @@
+{
+	"name": "DF_Products_IN1674",
+	"properties": {
+		"folder": {
+			"name": "SRC_to_STG"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				""
+			]
+		}
+	}
+}
