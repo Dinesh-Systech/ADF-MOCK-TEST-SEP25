@@ -1,9 +1,9 @@
 {
-	"name": "PL_src_to_stg_customers_IN1680",
+	"name": "PL_src_to_stg_orders_IN1680",
 	"properties": {
 		"activities": [
 			{
-				"name": "CP_customers_stg_customers",
+				"name": "CP_orders_stg_orders",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
