@@ -23,6 +23,9 @@
 								"Container": "adf-module-sep2025",
 								"Directory": "StageFiles/IN1685/IN1685_stg",
 								"File": "mod_stg_account_IN1685.csv"
+							},
+							"sink1": {
+								"File": "mod_dim_account_IN1685.csv"
 							}
 						}
 					},
