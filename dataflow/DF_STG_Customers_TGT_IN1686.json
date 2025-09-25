@@ -1,19 +1,34 @@
 {
-	"name": "DF_Customer_SCD2_Tgt",
+	"name": "DF_STG_Customers_TGT_IN1686",
 	"properties": {
+		"folder": {
+			"name": "STG_TGT"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
 				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1686",
+						"type": "DatasetReference"
+					},
 					"name": "SrcCustomer"
 				},
 				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1686",
+						"type": "DatasetReference"
+					},
 					"name": "TgtCustomer"
 				}
 			],
 			"sinks": [
 				{
-					"name": "SnkDimcustomersmodin1677"
+					"dataset": {
+						"referenceName": "DS_CSV_IN1686",
+						"type": "DatasetReference"
+					},
+					"name": "SnkDimcustomersmodin1686"
 				}
 			],
 			"transformations": [
@@ -60,7 +75,7 @@
 				"          FirstName as string,",
 				"          LastName as string,",
 				"          Gender as string,",
-				"          DateOfBirth as timestamp,",
+				"          DateOfBirth as date,",
 				"          Email as string,",
 				"          Phone as string,",
 				"          AddressLine1 as string,",
@@ -73,21 +88,22 @@
 				"          Occupation as string,",
 				"          AnnualIncome as double,",
 				"          RiskCategory as string,",
-				"          {created_by } as string,",
-				"          created_date as timestamp,",
-				"          updated_date as timestamp,",
-				"          updated_by as string",
+				"          created_by as string,",
+				"          created_date as string,",
+				"          update_by as string,",
+				"          update_date as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false) ~> SrcCustomer",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SrcCustomer",
 				"source(output(",
 				"          CustomerID as integer,",
-				"          customer_key as integer,",
+				"          customer_key as string,",
 				"          FirstName as string,",
 				"          LastName as string,",
 				"          FullName as string,",
 				"          Gender as string,",
-				"          DateOfBirth as timestamp,",
+				"          DateOfBirth as string,",
 				"          Age as string,",
 				"          Email as string,",
 				"          Phone as string,",
@@ -96,11 +112,11 @@
 				"          City as string,",
 				"          State as string,",
 				"          Country as string,",
-				"          PostalCode as integer,",
+				"          PostalCode as string,",
 				"          MaritalStatus as string,",
 				"          Occupation as string,",
 				"          Sector as string,",
-				"          AnnualIncome as double,",
+				"          AnnualIncome as string,",
 				"          RiskCategory as string,",
 				"          created_by as string,",
 				"          created_date as timestamp,",
@@ -108,7 +124,8 @@
 				"          updated_by as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
-				"     validateSchema: false) ~> TgtCustomer",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> TgtCustomer",
 				"SrcCustomer select(mapColumn(",
 				"          CustomerID,",
 				"          FirstName,",
@@ -135,8 +152,8 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> selectColumns1",
 				"TgtCustomer select(mapColumn(",
-				"          each(match(true()),",
-				"               'tgt_'+$$ = $$)",
+				"          tgt_CustomerID = CustomerID,",
+				"          tgt_State = State",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectColumns2",
@@ -150,7 +167,7 @@
 				"     disjoint: true) ~> split1@(insert, update)",
 				"split1@insert derive(created_date = currentTimestamp()) ~> TransformationAudit1",
 				"split1@update derive(updated_date = currentTimestamp(),",
-				"          updated_by = {created_by }) ~> TransformationAudit2",
+				"          updated_by = 'IN1686') ~> TransformationAudit2",
 				"TransformationAudit1, TransformationAudit2 union(byName: true)~> unionSplits",
 				"unionSplits select(mapColumn(",
 				"          CustomerID,",
@@ -199,7 +216,7 @@
 				"     partitionFileNames:['Dim_customers_mod_in1677'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> SnkDimcustomersmodin1677"
+				"     partitionBy('hash', 1)) ~> SnkDimcustomersmodin1686"
 			]
 		}
 	}
