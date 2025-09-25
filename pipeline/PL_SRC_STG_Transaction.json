@@ -1,6 +1,723 @@
 {
 	"name": "PL_SRC_STG_Transaction",
 	"properties": {
+		"activities": [
+			{
+				"name": "CP_FactTransaction_stg_transaction_mod_IN1684",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"additionalColumns": [
+							{
+								"name": "pipeline name",
+								"value": {
+									"value": "@pipeline().Pipeline",
+									"type": "Expression"
+								}
+							},
+							{
+								"name": "current date",
+								"value": {
+									"value": "@formatDateTime(utcNow())",
+									"type": "Expression"
+								}
+							},
+							{
+								"name": "current date1",
+								"value": {
+									"value": "@formatDateTime(utcNow())",
+									"type": "Expression"
+								}
+							},
+							{
+								"name": "pipeline name1",
+								"value": {
+									"value": "@pipeline().Pipeline",
+									"type": "Expression"
+								}
+							}
+						],
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "TransactionID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TransactionID",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AccountID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AccountID",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CustomerID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CustomerID",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TransactionDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TransactionDate",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TransactionTime",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TransactionTime",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TransactionType",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TransactionType",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Amount",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Amount",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BalanceAfterTransaction",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "BalanceAfterTransaction",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Currency",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Currency",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Channel",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Channel",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MerchantCode",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "MerchantCode",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Location",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Location",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Fee",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Fee",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ExchangeRate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ExchangeRate",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ApprovalCode",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ApprovalCode",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "FraudFlag",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "FraudFlag",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Narration",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Narration",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "pipeline name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "created by",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "current date",
+									"type": "String"
+								},
+								"sink": {
+									"name": "created date",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "current date1",
+									"type": "String"
+								},
+								"sink": {
+									"name": "updated date",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "pipeline name1",
+									"type": "String"
+								},
+								"sink": {
+									"name": "updated by",
+									"physicalType": "String"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_CSV_IN1684",
+						"type": "DatasetReference",
+						"parameters": {
+							"PR_Directory": "SourceFiles",
+							"PR_Filename": "transaction.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_CSV_IN1684",
+						"type": "DatasetReference",
+						"parameters": {
+							"PR_Directory": "StageFiles/IN1684",
+							"PR_Filename": "stg_transaction_mod_IN1684"
+						}
+					}
+				]
+			},
+			{
+				"name": "CP_stg_transaction_mod_IN1684_to_SQL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "DF_stg_transaction_Incremental_Load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "TransactionID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TransactionID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "AccountID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AccountID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "CustomerID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CustomerID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "TransactionDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TransactionDate",
+									"type": "Date",
+									"physicalType": "date"
+								}
+							},
+							{
+								"source": {
+									"name": "TransactionTime",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TransactionTime",
+									"type": "TimeSpan",
+									"physicalType": "time"
+								}
+							},
+							{
+								"source": {
+									"name": "TransactionType",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TransactionType",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Amount",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Amount",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 2,
+									"precision": 10
+								}
+							},
+							{
+								"source": {
+									"name": "BalanceAfterTransaction",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "BalanceAfterTransaction",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 2,
+									"precision": 10
+								}
+							},
+							{
+								"source": {
+									"name": "Currency",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Currency",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Channel",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Channel",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "MerchantCode",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "MerchantCode",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Location",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Location",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Fee",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Fee",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 2,
+									"precision": 10
+								}
+							},
+							{
+								"source": {
+									"name": "ExchangeRate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ExchangeRate",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 2,
+									"precision": 10
+								}
+							},
+							{
+								"source": {
+									"name": "ApprovalCode",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ApprovalCode",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "FraudFlag",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "FraudFlag",
+									"type": "Boolean",
+									"physicalType": "bit"
+								}
+							},
+							{
+								"source": {
+									"name": "Narration",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Narration",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "created by",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "created by",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "created date",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "created date",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "updated date",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "updated date",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "updated by",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "updated by",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_CSV_IN1684",
+						"type": "DatasetReference",
+						"parameters": {
+							"PR_Directory": "StageFiles/IN1684",
+							"PR_Filename": "stg_transaction_mod_IN1684"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL_IN1684",
+						"type": "DatasetReference",
+						"parameters": {
+							"PR_Tablename": "stg_transaction_mod_IN1684"
+						}
+					}
+				]
+			},
+			{
+				"name": "DF_stg_transaction_Incremental_Load",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "CP_FactTransaction_stg_transaction_mod_IN1684",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_stg_transaction_Incremental_Load",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SRCFactTransaction": {
+								"PR_Directory": "StageFiles/IN1684",
+								"PR_Filename": "stg_transaction_mod_IN1684"
+							},
+							"TGTTransaction": {
+								"PR_Directory": "StageFiles/IN1684",
+								"PR_Filename": "stg_transaction_mod_IN1684"
+							},
+							"SNKTransaction": {
+								"PR_Directory": "StageFiles/IN1684",
+								"PR_Filename": "stg_transaction_mod_IN1684"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
 		"folder": {
 			"name": "Module test/SRC to STG"
 		},

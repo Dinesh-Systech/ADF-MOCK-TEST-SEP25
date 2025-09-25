@@ -1,18 +1,222 @@
 {
-	"name": "dataflow1",
+	"name": "DF_stg_transaction_Incremental_Load",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
 				{
-					"name": "source1"
+					"dataset": {
+						"referenceName": "DS_CSV_IN1684",
+						"type": "DatasetReference"
+					},
+					"name": "SRCFactTransaction"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1684",
+						"type": "DatasetReference"
+					},
+					"name": "TGTTransaction"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1684",
+						"type": "DatasetReference"
+					},
+					"name": "SNKTransaction"
+				}
+			],
+			"transformations": [
+				{
+					"name": "leftFactTransactionAndTGTTransaction"
+				},
+				{
+					"name": "aggMaxTransactionDate"
+				},
+				{
+					"name": "SRCSelect"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "unionInsertWithUpdate"
+				},
+				{
+					"name": "selectTableOrder"
+				},
+				{
+					"name": "SelectInsert"
+				},
+				{
+					"name": "selectUpdate"
+				},
+				{
+					"name": "transformationAuditColumns1"
+				},
+				{
+					"name": "transformationAuditColumns2"
+				}
+			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> source1"
+				"source(output(",
+				"          TransactionID as integer,",
+				"          AccountID as integer,",
+				"          CustomerID as integer,",
+				"          TransactionDate as date,",
+				"          TransactionTime as timestamp,",
+				"          TransactionType as string,",
+				"          Amount as double,",
+				"          BalanceAfterTransaction as double,",
+				"          Currency as string,",
+				"          Channel as string,",
+				"          MerchantCode as string,",
+				"          Location as string,",
+				"          Fee as double,",
+				"          ExchangeRate as double,",
+				"          ApprovalCode as string,",
+				"          FraudFlag as boolean,",
+				"          Narration as string,",
+				"          {created by} as string,",
+				"          {created date} as date,",
+				"          {updated date} as date,",
+				"          {updated by} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SRCFactTransaction",
+				"source(output(",
+				"          TransactionID as integer,",
+				"          AccountID as integer,",
+				"          CustomerID as integer,",
+				"          TransactionDate as date,",
+				"          TransactionTime as timestamp,",
+				"          TransactionType as string,",
+				"          Amount as double,",
+				"          BalanceAfterTransaction as double,",
+				"          Currency as string,",
+				"          Channel as string,",
+				"          MerchantCode as string,",
+				"          Location as string,",
+				"          Fee as double,",
+				"          ExchangeRate as double,",
+				"          ApprovalCode as string,",
+				"          FraudFlag as boolean,",
+				"          Narration as string,",
+				"          {created by} as string,",
+				"          {created date} as date,",
+				"          {updated date} as date,",
+				"          {updated by} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> TGTTransaction",
+				"SRCSelect, aggMaxTransactionDate join(SRC_TransactionID == TransactionID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> leftFactTransactionAndTGTTransaction",
+				"TGTTransaction aggregate(groupBy(TransactionID),",
+				"     max_TransactionDate = max(TransactionDate)) ~> aggMaxTransactionDate",
+				"SRCFactTransaction select(mapColumn(",
+				"          each(match(true()),",
+				"               \"SRC_\"+$$ = $$)",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SRCSelect",
+				"leftFactTransactionAndTGTTransaction split(isNull(TransactionID),",
+				"     SRC_TransactionID == TransactionID && (SRC_TransactionDate > max_TransactionDate),",
+				"     disjoint: false) ~> split1@(Insert, Update)",
+				"SelectInsert, selectUpdate union(byName: true)~> unionInsertWithUpdate",
+				"unionInsertWithUpdate select(mapColumn(",
+				"          TransactionID,",
+				"          AccountID,",
+				"          CustomerID,",
+				"          TransactionDate,",
+				"          TransactionTime,",
+				"          TransactionType,",
+				"          Amount,",
+				"          BalanceAfterTransaction,",
+				"          Currency,",
+				"          Channel,",
+				"          MerchantCode,",
+				"          Location,",
+				"          Fee,",
+				"          ExchangeRate,",
+				"          ApprovalCode,",
+				"          FraudFlag,",
+				"          Narration,",
+				"          {created by},",
+				"          {created date},",
+				"          {updated date},",
+				"          {updated by}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectTableOrder",
+				"transformationAuditColumns1 select(mapColumn(",
+				"          TransactionID = SRC_TransactionID,",
+				"          AccountID = SRC_AccountID,",
+				"          CustomerID = SRC_CustomerID,",
+				"          TransactionDate = SRC_TransactionDate,",
+				"          TransactionTime = SRC_TransactionTime,",
+				"          TransactionType = SRC_TransactionType,",
+				"          Amount = SRC_Amount,",
+				"          BalanceAfterTransaction = SRC_BalanceAfterTransaction,",
+				"          Currency = SRC_Currency,",
+				"          Channel = SRC_Channel,",
+				"          MerchantCode = SRC_MerchantCode,",
+				"          Location = SRC_Location,",
+				"          Fee = SRC_Fee,",
+				"          ExchangeRate = SRC_ExchangeRate,",
+				"          ApprovalCode = SRC_ApprovalCode,",
+				"          FraudFlag = SRC_FraudFlag,",
+				"          Narration = SRC_Narration,",
+				"          {created by} = {SRC_created by},",
+				"          {created date} = {SRC_created date},",
+				"          {updated date} = {SRC_updated date},",
+				"          {updated by} = {SRC_updated by}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectInsert",
+				"transformationAuditColumns2 select(mapColumn(",
+				"          TransactionID = SRC_TransactionID,",
+				"          AccountID = SRC_AccountID,",
+				"          CustomerID = SRC_CustomerID,",
+				"          TransactionDate = SRC_TransactionDate,",
+				"          TransactionTime = SRC_TransactionTime,",
+				"          TransactionType = SRC_TransactionType,",
+				"          Amount = SRC_Amount,",
+				"          BalanceAfterTransaction = SRC_BalanceAfterTransaction,",
+				"          Currency = SRC_Currency,",
+				"          Channel = SRC_Channel,",
+				"          MerchantCode = SRC_MerchantCode,",
+				"          Location = SRC_Location,",
+				"          Fee = SRC_Fee,",
+				"          ExchangeRate = SRC_ExchangeRate,",
+				"          ApprovalCode = SRC_ApprovalCode,",
+				"          FraudFlag = SRC_FraudFlag,",
+				"          Narration = SRC_Narration,",
+				"          {created by} = {SRC_created by},",
+				"          {created date} = {SRC_created date},",
+				"          {updated date} = {SRC_updated date},",
+				"          {updated by} = {SRC_updated by}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectUpdate",
+				"split1@Insert derive({SRC_created by} = {SRC_created by},",
+				"          {SRC_created date} = currentDate(),",
+				"          {SRC_updated date} = currentDate(),",
+				"          {SRC_updated by} = {SRC_updated by}) ~> transformationAuditColumns1",
+				"split1@Update derive({SRC_updated date} = {SRC_updated date},",
+				"          {SRC_updated by} = {SRC_updated by}) ~> transformationAuditColumns2",
+				"selectTableOrder sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['stg_transaction_mod_IN1684'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SNKTransaction"
 			]
 		}
 	}
