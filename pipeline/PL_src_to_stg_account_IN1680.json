@@ -5,7 +5,14 @@
 			{
 				"name": "CP_src_account_to_sql_account",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "CP_src_account_to_csv_account",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -17,6 +24,20 @@
 				"typeProperties": {
 					"source": {
 						"type": "DelimitedTextSource",
+						"additionalColumns": [
+							{
+								"value": "$$FILEPATH"
+							},
+							{
+								"value": "$$FILEPATH"
+							},
+							{
+								"value": "$$FILEPATH"
+							},
+							{
+								"value": "$$FILEPATH"
+							}
+						],
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
 							"recursive": true,
@@ -47,8 +68,8 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"container": "adf-module-sep2025",
-							"folder": "SourceFiles",
-							"file": "DimAccount.csv"
+							"folder": "StageFiles/IN1680",
+							"file": "stg_account_mod_IN1680.csv"
 						}
 					}
 				],
@@ -66,14 +87,7 @@
 			{
 				"name": "CP_src_account_to_csv_account",
 				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "CP_src_account_to_sql_account",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -84,9 +98,45 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "SqlServerSource",
-						"queryTimeout": "02:00:00",
-						"partitionOption": "None"
+						"type": "DelimitedTextSource",
+						"additionalColumns": [
+							{
+								"name": "created_date",
+								"value": {
+									"value": "@utcNow()",
+									"type": "Expression"
+								}
+							},
+							{
+								"name": "created_by",
+								"value": {
+									"value": "@pipeline().Pipeline",
+									"type": "Expression"
+								}
+							},
+							{
+								"name": "updated_date",
+								"value": {
+									"value": "@pipeline().Pipeline",
+									"type": "Expression"
+								}
+							},
+							{
+								"name": "updated_by",
+								"value": {
+									"value": "@pipeline().Pipeline",
+									"type": "Expression"
+								}
+							}
+						],
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
 					},
 					"sink": {
 						"type": "DelimitedTextSink",
@@ -102,6 +152,244 @@
 					"enableStaging": false,
 					"translator": {
 						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "AccountID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AccountID",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CustomerID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CustomerID",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AccountNumber",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AccountNumber",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AccountType",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AccountType",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OpenDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "OpenDate",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CloseDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CloseDate",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Status",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Status",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BranchCode",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "BranchCode",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Currency",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Currency",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "InterestRate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "InterestRate",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CreditLimit",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CreditLimit",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Balance",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Balance",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OverdraftLimit",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "OverdraftLimit",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "IsJointAccount",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "IsJointAccount",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Channel",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Channel",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastActivityDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "LastActivityDate",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "created_date",
+									"type": "String"
+								},
+								"sink": {
+									"name": "created_date",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "created_by",
+									"type": "String"
+								},
+								"sink": {
+									"name": "created_by",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "updated_date",
+									"type": "String"
+								},
+								"sink": {
+									"name": "updated_date",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "updated_by",
+									"type": "String"
+								},
+								"sink": {
+									"name": "updated_by",
+									"type": "String",
+									"physicalType": "String"
+								}
+							}
+						],
 						"typeConversion": true,
 						"typeConversionSettings": {
 							"allowDataTruncation": true,
@@ -111,11 +399,12 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_sqlserver_IN1680",
+						"referenceName": "DS_CSV_IN1680",
 						"type": "DatasetReference",
 						"parameters": {
-							"schemaname": "KRavi",
-							"tablename": "stg_account_mod_IN1680"
+							"container": "adf-module-sep2025",
+							"folder": "SourceFiles",
+							"file": "account.csv"
 						}
 					}
 				],
@@ -125,7 +414,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"container": "adf-module-sep2025",
-							"folder": "StageFiles",
+							"folder": "StageFiles/IN1680",
 							"file": "stg_account_mod_IN1680.csv"
 						}
 					}

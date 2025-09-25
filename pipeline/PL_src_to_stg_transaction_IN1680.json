@@ -17,6 +17,41 @@
 				"typeProperties": {
 					"enableStaging": false
 				}
+			},
+			{
+				"name": "DF_transaction_incremental",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_src_to_stg_transaction_incremental",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SRCsrcTransaction": {
+								"container": "adf-module-sep2025",
+								"folder": "SourceFiles",
+								"file": "FactTransaction.csv"
+							},
+							"SRCtgtTransaction": {
+								"container": "adf-module-sep2025",
+								"folder": "StageFiles/IN1680"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
 			}
 		],
 		"folder": {
