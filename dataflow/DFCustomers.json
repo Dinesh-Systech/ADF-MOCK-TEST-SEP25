@@ -18,7 +18,7 @@
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "FullName"
+					"name": "Age"
 				}
 			],
 			"scriptLines": [
@@ -27,7 +27,7 @@
 				"          FirstName as string,",
 				"          LastName as string,",
 				"          Gender as string,",
-				"          DateOfBirth as string,",
+				"          DateOfBirth as date,",
 				"          Email as string,",
 				"          Phone as string,",
 				"          AddressLine1 as string,",
@@ -44,7 +44,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SRCcustomers",
-				"SRCcustomers derive(FullName = ERROR_FUNCTION('iif(Gender==__SINGLE_QUOTE__Male__SINGLE_QUOTE__&& MaritalStatus ==__SINGLE_QUOTE__Married__SINGLE_QUOTE__,concat(__SINGLE_QUOTE__Mr.__SINGLE_QUOTE__, FirstName,LastName),)')) ~> FullName"
+				"SRCcustomers derive(Age = year(currentTimestamp()) - year(DateOfBirth)) ~> Age"
 			]
 		}
 	}
