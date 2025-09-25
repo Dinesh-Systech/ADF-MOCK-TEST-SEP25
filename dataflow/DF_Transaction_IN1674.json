@@ -13,6 +13,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "Srctransaction"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_SourceCSV_IN1674",
+						"type": "DatasetReference"
+					},
+					"name": "Srccomparetable"
 				}
 			],
 			"sinks": [
@@ -29,7 +36,22 @@
 					"name": "Transformation"
 				},
 				{
-					"name": "selectcolumn"
+					"name": "selectcolumnsrc"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "LeftJoincomparetable"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "LeftjoinFilter"
+				},
+				{
+					"name": "Lastmmodifiedfilter"
 				}
 			],
 			"scriptLines": [
@@ -58,6 +80,32 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> Srctransaction",
+				"source(output(",
+				"          TransactionID as short,",
+				"          AccountID as short,",
+				"          CustomerID as short,",
+				"          TransactionDate as string,",
+				"          TransactionTime as string,",
+				"          TransactionType as string,",
+				"          Amount as double,",
+				"          BalanceAfterTransaction as double,",
+				"          Currency as string,",
+				"          Channel as string,",
+				"          MerchantCode as string,",
+				"          Location as string,",
+				"          Fee as double,",
+				"          ExchangeRate as double,",
+				"          ApprovalCode as string,",
+				"          FraudFlag as boolean,",
+				"          Narration as string,",
+				"          created_date as date,",
+				"          {created_by } as string,",
+				"          updated_date as date,",
+				"          updated_by as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Srccomparetable",
 				"Srctransaction derive({created date} = currentDate(),",
 				"          {created by } = $pipname,",
 				"          {updated date} = currentDate(),",
@@ -86,8 +134,47 @@
 				"          updated_by = {updated by}",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> selectcolumn",
-				"selectcolumn sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectcolumnsrc",
+				"Srccomparetable select(mapColumn(",
+				"          TransactionID_src = TransactionID,",
+				"          AccountID_src = AccountID,",
+				"          CustomerID_src = CustomerID,",
+				"          TransactionDate_src = TransactionDate,",
+				"          TransactionTime_src = TransactionTime,",
+				"          TransactionType_src = TransactionType,",
+				"          Amount_src = Amount,",
+				"          BalanceAfterTransaction_src = BalanceAfterTransaction,",
+				"          Currency_src = Currency,",
+				"          Channel_src = Channel,",
+				"          MerchantCode_src = MerchantCode,",
+				"          Location_src = Location,",
+				"          Fee_src = Fee,",
+				"          ExchangeRate_src = ExchangeRate,",
+				"          ApprovalCode_src = ApprovalCode,",
+				"          FraudFlag_src = FraudFlag,",
+				"          Narration_src = Narration,",
+				"          created_date_src = created_date,",
+				"          {created_by _src} = {created_by },",
+				"          updated_date_src = updated_date,",
+				"          {updated_by-Src} = updated_by",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"selectcolumnsrc, select1 join(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> LeftJoincomparetable",
+				"LeftJoincomparetable split(TransactionID == TransactionID_src,",
+				"     TransactionID != TransactionID_src,",
+				"     disjoint: false) ~> split1@(currentvalue, update)",
+				"split1@currentvalue, Lastmmodifiedfilter join(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> LeftjoinFilter",
+				"split1@update filter(endsWith($pipname, '.csv')) ~> Lastmmodifiedfilter",
+				"LeftjoinFilter sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          AccountID as string,",

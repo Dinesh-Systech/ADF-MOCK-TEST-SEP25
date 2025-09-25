@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Data flow1",
+				"name": "DF_Transaction_IN1674",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -43,6 +43,69 @@
 					},
 					"traceLevel": "Fine"
 				}
+			},
+			{
+				"name": "CD_SRC-TGT",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_SourceCSV_IN1674",
+						"type": "DatasetReference",
+						"parameters": {
+							"filename": "stg_transaction_Mod_IN1674.csv",
+							"folder": "StageFiles/IN1674",
+							"container": "adf-module-sep2025"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQLTarget_IN1674",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schemaname": "CKumaram",
+							"Databasename": "ADF_Training",
+							"Tablename": "stg_transaction_Mod_IN1674"
+						}
+					}
+				]
 			}
 		],
 		"folder": {
