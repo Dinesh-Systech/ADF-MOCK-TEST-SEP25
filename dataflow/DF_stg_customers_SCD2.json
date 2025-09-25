@@ -28,7 +28,7 @@
 						"referenceName": "DS_CSV_IN1684",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "SNKDimCustomers"
 				}
 			],
 			"transformations": [
@@ -42,7 +42,7 @@
 					"name": "split1"
 				},
 				{
-					"name": "union1"
+					"name": "unionSelectSrc"
 				},
 				{
 					"name": "selectTGT"
@@ -131,7 +131,7 @@
 				"leftSRCCustomersAndTGTCustomers split(isNull(TGT_CustomerID) || (SRC_CustomerID==TGT_CustomerID && (SRC_State != TGT_State)),",
 				"     SRC_CustomerID==TGT_CustomerID && (SRC_State != TGT_State),",
 				"     disjoint: true) ~> split1@(insert, update)",
-				"selectSRCColumns, selectTGTColumns union(byName: true)~> union1",
+				"selectSRCColumns, selectTGTColumns union(byName: true)~> unionSelectSrc",
 				"TGTDimCustomers select(mapColumn(",
 				"          each(match(true()),",
 				"               \"TGT_\"+$$ = $$)",
@@ -207,7 +207,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> selectTGTColumns",
-				"union1 sink(allowSchemaDrift: true,",
+				"unionSelectSrc sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:['Dim_Customers_mod_IN1684'],",
 				"     skipDuplicateMapInputs: true,",
@@ -236,7 +236,7 @@
 				"          {updated by},",
 				"          SRC_CustomerID",
 				"     ),",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     partitionBy('hash', 1)) ~> SNKDimCustomers"
 			]
 		}
 	}
