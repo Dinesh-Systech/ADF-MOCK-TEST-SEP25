@@ -1,5 +1,5 @@
 {
-	"name": "DF_Orders_IN1674",
+	"name": "DF_Transaction_IN1674",
 	"properties": {
 		"folder": {
 			"name": "SRC_to_STG"
