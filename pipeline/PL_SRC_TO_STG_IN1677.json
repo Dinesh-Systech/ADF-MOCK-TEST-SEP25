@@ -162,8 +162,6 @@
 			{
 				"name": "ForEach1_Stg_iteration",
 				"type": "ForEach",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Metadata_Stg",
@@ -282,8 +280,6 @@
 			{
 				"name": "Metadata_Stg",
 				"type": "GetMetadata",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "ForEach_Src_iteration",
