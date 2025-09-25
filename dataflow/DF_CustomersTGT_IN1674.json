@@ -6,11 +6,37 @@
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
+			"sources": [
+				{
+					"name": "srcCustomers"
+				},
+				{
+					"name": "source1"
+				}
+			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "surrogateKey1"
+				},
+				{
+					"name": "select"
+				},
+				{
+					"name": "derivedColumn"
+				}
+			],
 			"scriptLines": [
-				""
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false) ~> srcCustomers",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false) ~> source1",
+				"srcCustomers keyGenerate(output({undefined} as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"source1 select(skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select",
+				"surrogateKey1 derive() ~> derivedColumn"
 			]
 		}
 	}
