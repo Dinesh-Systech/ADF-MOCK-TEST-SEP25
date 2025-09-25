@@ -53,7 +53,11 @@
 				"outputs": [
 					{
 						"referenceName": "DS_BLOB_IN1677",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"foldername": "StageFiles/IN1677",
+							"filename": "stg_transaction_mod_IN1677"
+						}
 					}
 				]
 			}

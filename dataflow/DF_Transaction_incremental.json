@@ -9,20 +9,36 @@
 						"referenceName": "DS_BLOB_IN1677",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "SrcTran"
 				},
 				{
-					"name": "source2"
+					"dataset": {
+						"referenceName": "DS_BLOB_IN1677",
+						"type": "DatasetReference"
+					},
+					"name": "TgtTran"
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				}
+			],
 			"scriptLines": [
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1",
+				"     ignoreNoFilesFound: false) ~> SrcTran",
 				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> source2"
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> TgtTran",
+				"SrcTran select(skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"TgtTran select(skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2"
 			]
 		}
 	}
