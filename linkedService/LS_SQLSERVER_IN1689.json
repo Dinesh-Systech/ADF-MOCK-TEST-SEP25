@@ -2,6 +2,14 @@
 	"name": "LS_SQLSERVER_IN1689",
 	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
+		"parameters": {
+			"database": {
+				"type": "string"
+			},
+			"tablename": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
@@ -11,7 +19,7 @@
 			"trustServerCertificate": true,
 			"authenticationType": "SQL",
 			"userName": "I2025_VSri",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJkYThjNmJlMi0yZDhiLTRjYzgtOTRjOC1mODk3ZGMzZGFlNjMiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI2NzE5Y2FjZS0wM2RlLTRkODEtYjIwYi1kNzJiMTBmMThiMjQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "SHIR-OnPrem-SQL",
