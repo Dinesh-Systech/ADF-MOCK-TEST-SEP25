@@ -1,0 +1,24 @@
+{
+	"name": "DS_SqlServer_OnPrem_IN1677",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SqlServer_IN1677",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"TABLE": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "JSivakum",
+			"table": {
+				"value": "@dataset().TABLE",
+				"type": "Expression"
+			}
+		}
+	}
+}
