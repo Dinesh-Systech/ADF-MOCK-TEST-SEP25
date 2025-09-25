@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "DS_SRC_TO_TGT_IN1689",
+						"referenceName": "DS_MODULE_TEST_IN1689",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "DS_SRC_TO_TGT_IN1689",
+						"referenceName": "DS_MODULE_TEST_IN1689",
 						"type": "DatasetReference"
 					},
 					"name": "SNKcustomers"

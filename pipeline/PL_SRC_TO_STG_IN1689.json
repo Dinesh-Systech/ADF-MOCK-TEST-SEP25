@@ -1,10 +1,134 @@
 {
-	"name": "pipeline1",
+	"name": "PL_SRC_TO_STG_IN1689",
 	"properties": {
 		"activities": [
 			{
-				"name": "CD_SRC_TGT_CUSTOMERS_IN1689",
+				"name": "DF_CUSTOMERS",
+				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_SRC_TO_TGT_CUSTOMERS_IN1689",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"source1": {
+								"foldername": "StageFiles/IN1689",
+								"filename": "Mater_Customer.csv"
+							},
+							"SNKcustomers": {
+								"foldername": "StageFiles/IN1689/SRC_STG_FILES_IN1689",
+								"filename": "stg_customers_IN1689.csv"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DF_TRANSACTION",
+				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "DF_CUSTOMERS",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_SRC_TO_TGT_TRANSACTION_IN1689",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SRCtransaction": {
+								"foldername": "StageFiles/IN1689",
+								"filename": "Transaction.csv"
+							},
+							"SNKtransaction": {
+								"foldername": "StageFiles/IN1689/SRC_STG_FILES_IN1689",
+								"filename": "stg_transaction_IN1689.csv"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DF_ACCOUNT",
+				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "DF_TRANSACTION",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_SRC_TO_TGT_ACCOUNT_IN1689",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SRCaccount": {
+								"foldername": "StageFiles/IN1689",
+								"filename": "Master_Account.csv"
+							},
+							"SNKaccount": {
+								"foldername": "StageFiles/IN1689/SRC_STG_FILES_IN1689",
+								"filename": "stg_account_IN1689.csv"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "CD_SRC_STG_TRANSACTION",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -32,9 +156,407 @@
 							},
 							{
 								"name": "updated_by",
-								"value": ""
+								"value": "toString(null())"
 							}
 						],
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings",
+							"copyBehavior": "PreserveHierarchy"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_MODULE_TEST_IN1689",
+						"type": "DatasetReference",
+						"parameters": {
+							"foldername": "StageFiles/IN1689",
+							"filename": "Transaction.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_MODULE_TEST_IN1689",
+						"type": "DatasetReference",
+						"parameters": {
+							"foldername": "StageFiles/IN1689/SRC_STG_FILES_IN1689",
+							"filename": "stg_transaction_IN1689.csv"
+						}
+					}
+				]
+			},
+			{
+				"name": "CD_SRC_STG_ACCOUNT",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "CD_SRC_STG_TRANSACTION",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"additionalColumns": [
+							{
+								"name": "created_date",
+								"value": "currentUTC()"
+							},
+							{
+								"name": "created_by",
+								"value": "'IN1689'"
+							},
+							{
+								"name": "updated_date",
+								"value": "toTimestamp(null())"
+							},
+							{
+								"name": "updated_by",
+								"value": "toString(null())"
+							}
+						],
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "AccountID",
+									"type": "Int64",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AccountID",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CustomerID",
+									"type": "Int64",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CustomerID",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AccountNumber",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AccountNumber",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AccountType",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AccountType",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OpenDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "OpenDate",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CloseDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CloseDate",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Status",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Status",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BranchCode",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "BranchCode",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Currency",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Currency",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "InterestRate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "InterestRate",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CreditLimit",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CreditLimit",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Balance",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Balance",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "OverdraftLimit",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "OverdraftLimit",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "IsJointAccount",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "IsJointAccount",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Channel",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Channel",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastActivityDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "LastActivityDate",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "created_date",
+									"type": "String"
+								},
+								"sink": {
+									"name": "created_date",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "created_by",
+									"type": "String"
+								},
+								"sink": {
+									"name": "created_by",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "updated_date",
+									"type": "String"
+								},
+								"sink": {
+									"name": "updated_date",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "updated_by",
+									"type": "String"
+								},
+								"sink": {
+									"name": "updated_by",
+									"type": "String",
+									"physicalType": "String"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_MODULE_TEST_IN1689",
+						"type": "DatasetReference",
+						"parameters": {
+							"foldername": "StageFiles/IN1689",
+							"filename": "Master_Account.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_MODULE_TEST_IN1689",
+						"type": "DatasetReference",
+						"parameters": {
+							"foldername": "StageFiles/IN1689/SRC_STG_FILES_IN1689",
+							"filename": "stg_account_IN1689.csv"
+						}
+					}
+				]
+			},
+			{
+				"name": "CD_BLOB_SQL",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
 							"recursive": true,
@@ -48,11 +570,11 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_SRC_TO_TGT_IN1689",
+						"referenceName": "DS_MODULE_TEST_IN1689",
 						"type": "DatasetReference",
 						"parameters": {
-							"foldername": "StageFiles/IN1689",
-							"filename": "Mater_Customer.csv"
+							"foldername": "StageFiles/IN1689/SRC_STG_FILES_IN1689",
+							"filename": "stg_account_IN1689.csv"
 						}
 					}
 				]

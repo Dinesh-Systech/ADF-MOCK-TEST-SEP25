@@ -1,5 +1,5 @@
 {
-	"name": "DS_SRC_TO_TGT_IN1689",
+	"name": "DS_MODULE_TEST_IN1689",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_BLOB_STORAGE_IN1689",
