@@ -1,0 +1,22 @@
+{
+	"name": "DF_Account_IN1674",
+	"properties": {
+		"folder": {
+			"name": "SRC_to_STG"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"name": "Src"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false) ~> Src"
+			]
+		}
+	}
+}
