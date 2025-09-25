@@ -1,5 +1,5 @@
 {
-	"name": "DF_Transaction_IN1674",
+	"name": "DF_Account__IN1674",
 	"properties": {
 		"folder": {
 			"name": "SRC_to_STG"
@@ -12,7 +12,7 @@
 						"referenceName": "DS_SourceCSV_IN1674",
 						"type": "DatasetReference"
 					},
-					"name": "Srctransaction"
+					"name": "SrcAccount"
 				}
 			],
 			"sinks": [
@@ -21,73 +21,72 @@
 						"referenceName": "DS_SourceCSV_IN1674",
 						"type": "DatasetReference"
 					},
-					"name": "sinkTransaction"
+					"name": "SinkAccount"
 				}
 			],
 			"transformations": [
 				{
-					"name": "Transformation"
+					"name": "TransformationAccount"
 				},
 				{
-					"name": "selectcolumn"
+					"name": "SelectColumn"
 				}
 			],
 			"scriptLines": [
 				"parameters{",
-				"     pipname as string",
+				"     name as string,",
+				"     id as string",
 				"}",
 				"source(output(",
-				"          TransactionID as integer,",
-				"          AccountID as integer,",
-				"          CustomerID as integer,",
-				"          TransactionDate as date,",
-				"          TransactionTime as timestamp,",
-				"          TransactionType as string,",
-				"          Amount as double,",
-				"          BalanceAfterTransaction as double,",
+				"          AccountID as short,",
+				"          CustomerID as short,",
+				"          AccountNumber as string,",
+				"          AccountType as string,",
+				"          OpenDate as date,",
+				"          CloseDate as date,",
+				"          Status as string,",
+				"          BranchCode as string,",
 				"          Currency as string,",
+				"          InterestRate as double,",
+				"          CreditLimit as double,",
+				"          Balance as double,",
+				"          OverdraftLimit as double,",
+				"          IsJointAccount as boolean,",
 				"          Channel as string,",
-				"          MerchantCode as string,",
-				"          Location as string,",
-				"          Fee as double,",
-				"          ExchangeRate as double,",
-				"          ApprovalCode as string,",
-				"          FraudFlag as boolean,",
-				"          Narration as string",
+				"          LastActivityDate as date",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> Srctransaction",
-				"Srctransaction derive({created date} = currentDate(),",
-				"          {created by } = $pipname,",
+				"     ignoreNoFilesFound: false) ~> SrcAccount",
+				"SrcAccount derive({created by } = $name,",
+				"          {created date} = currentDate(),",
 				"          {updated date} = currentDate(),",
-				"          {updated by} = $pipname) ~> Transformation",
-				"Transformation select(mapColumn(",
-				"          TransactionID,",
+				"          {updated by} = $name) ~> TransformationAccount",
+				"TransformationAccount select(mapColumn(",
 				"          AccountID,",
 				"          CustomerID,",
-				"          TransactionDate,",
-				"          TransactionTime,",
-				"          TransactionType,",
-				"          Amount,",
-				"          BalanceAfterTransaction,",
+				"          AccountNumber,",
+				"          AccountType,",
+				"          OpenDate,",
+				"          CloseDate,",
+				"          Status,",
+				"          BranchCode,",
 				"          Currency,",
+				"          InterestRate,",
+				"          CreditLimit,",
+				"          Balance,",
+				"          OverdraftLimit,",
+				"          IsJointAccount,",
 				"          Channel,",
-				"          MerchantCode,",
-				"          Location,",
-				"          Fee,",
-				"          ExchangeRate,",
-				"          ApprovalCode,",
-				"          FraudFlag,",
-				"          Narration,",
-				"          created_date = {created date},",
+				"          LastActivityDate,",
 				"          {created_by } = {created by },",
+				"          created_date = {created date},",
 				"          updated_date = {updated date},",
 				"          updated_by = {updated by}",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> selectcolumn",
-				"selectcolumn sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectColumn",
+				"SelectColumn sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          AccountID as string,",
@@ -108,7 +107,7 @@
 				"          LastActivityDate as string",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sinkTransaction"
+				"     skipDuplicateMapOutputs: true) ~> SinkAccount"
 			]
 		}
 	}

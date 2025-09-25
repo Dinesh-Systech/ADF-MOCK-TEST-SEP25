@@ -1,0 +1,53 @@
+{
+	"name": "PL_Transaction_IN1674",
+	"properties": {
+		"activities": [
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_Transaction_IN1674",
+						"type": "DataFlowReference",
+						"parameters": {
+							"pipname": {
+								"value": "'@{pipeline().Pipeline}'",
+								"type": "Expression"
+							}
+						},
+						"datasetParameters": {
+							"Srctransaction": {
+								"filename": "transaction.csv",
+								"folder": "SourceFiles",
+								"container": "adf-module-sep2025"
+							},
+							"sinkTransaction": {
+								"filename": "stg_transaction_Mod_IN1674.csv",
+								"folder": "StageFiles/IN1674",
+								"container": "adf-module-sep2025"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "Module_Test/SRC-STG"
+		},
+		"annotations": []
+	}
+}
