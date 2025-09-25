@@ -1,16 +1,130 @@
 {
-	"name": "DF_CustomersTGT_IN1674",
+	"name": "DF_AccontTGT__IN1674",
 	"properties": {
 		"folder": {
 			"name": "STG_to_TGT"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
-			"sinks": [],
-			"transformations": [],
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_SourceCSV_IN1674",
+						"type": "DatasetReference"
+					},
+					"name": "SrcAmountTgt"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_SourceCSV_IN1674",
+						"type": "DatasetReference"
+					},
+					"name": "Amountsink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "nullhandeling"
+				},
+				{
+					"name": "surrodateAccountkey"
+				},
+				{
+					"name": "Addcolumn"
+				},
+				{
+					"name": "Selectcolumn"
+				}
+			],
 			"scriptLines": [
-				""
+				"source(output(",
+				"          AccountID as short,",
+				"          CustomerID as short,",
+				"          AccountNumber as string,",
+				"          AccountType as string,",
+				"          OpenDate as string,",
+				"          CloseDate as string,",
+				"          Status as string,",
+				"          BranchCode as string,",
+				"          Currency as string,",
+				"          InterestRate as double,",
+				"          CreditLimit as double,",
+				"          Balance as double,",
+				"          OverdraftLimit as double,",
+				"          IsJointAccount as integer,",
+				"          Channel as string,",
+				"          LastActivityDate as string,",
+				"          {created_by } as string,",
+				"          created_date as date,",
+				"          updated_date as date,",
+				"          updated_by as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SrcAmountTgt",
+				"Selectcolumn derive(each(match(type == 'date'), $$ = currentDate())) ~> nullhandeling",
+				"SrcAmountTgt keyGenerate(output(account_key as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrodateAccountkey",
+				"surrodateAccountkey derive(Account_Tenure = toInteger((currentUTC() - toTimestamp(CloseDate)) / 00000),",
+				"          EffectiveAnnualYield = power(add(divide(InterestRate, 12),-1),12),",
+				"          SharedLiabilityRisk = iif(IsJointAccount == 1 && OverdraftLimit > 10000, 'Shared Liability Risk',\r",
+				"iif(IsJointAccount == 1 && OverdraftLimit <= 10000,'Joint Account - Normal Risk',\r",
+				"iif(IsJointAccount == 0 && OverdraftLimit > 10000, 'Single Account - High Exposure','Low Risk'))),",
+				"          DaysSinceLastActivity = 00000) ~> Addcolumn",
+				"Addcolumn select(mapColumn(",
+				"          AccountID,",
+				"          CustomerID,",
+				"          AccountNumber,",
+				"          AccountType,",
+				"          OpenDate,",
+				"          CloseDate,",
+				"          Status,",
+				"          BranchCode,",
+				"          Currency,",
+				"          InterestRate,",
+				"          CreditLimit,",
+				"          Balance,",
+				"          OverdraftLimit,",
+				"          IsJointAccount,",
+				"          Channel,",
+				"          LastActivityDate,",
+				"          {created_by },",
+				"          created_date,",
+				"          updated_date,",
+				"          updated_by,",
+				"          account_key,",
+				"          Account_Tenure,",
+				"          EffectiveAnnualYield,",
+				"          SharedLiabilityRisk,",
+				"          DaysSinceLastActivity",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> Selectcolumn",
+				"nullhandeling sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          AccountID as string,",
+				"          CustomerID as string,",
+				"          AccountNumber as string,",
+				"          AccountType as string,",
+				"          OpenDate as string,",
+				"          CloseDate as string,",
+				"          Status as string,",
+				"          BranchCode as string,",
+				"          Currency as string,",
+				"          InterestRate as string,",
+				"          CreditLimit as string,",
+				"          Balance as string,",
+				"          OverdraftLimit as string,",
+				"          IsJointAccount as string,",
+				"          Channel as string,",
+				"          LastActivityDate as string",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> Amountsink"
 			]
 		}
 	}

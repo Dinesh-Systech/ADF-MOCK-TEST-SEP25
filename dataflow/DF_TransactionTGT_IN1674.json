@@ -1,16 +1,130 @@
 {
-	"name": "DF_OrdersTGT_IN1674",
+	"name": "DF_TransactionTGT_IN1674",
 	"properties": {
 		"folder": {
 			"name": "STG_to_TGT"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
-			"sinks": [],
-			"transformations": [],
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_SourceCSV_IN1674",
+						"type": "DatasetReference"
+					},
+					"name": "srcTransaction"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_SourceCSV_IN1674",
+						"type": "DatasetReference"
+					},
+					"name": "sinkTransaction"
+				}
+			],
+			"transformations": [
+				{
+					"name": "surrogatecolumn"
+				},
+				{
+					"name": "Tranformation"
+				},
+				{
+					"name": "Select"
+				}
+			],
 			"scriptLines": [
-				""
+				"source(output(",
+				"          TransactionID as integer,",
+				"          AccountID as short,",
+				"          CustomerID as short,",
+				"          TransactionDate as string,",
+				"          TransactionTime as string,",
+				"          TransactionType as string,",
+				"          Amount as double,",
+				"          BalanceAfterTransaction as double,",
+				"          Currency as string,",
+				"          Channel as string,",
+				"          MerchantCode as string,",
+				"          Location as string,",
+				"          Fee as double,",
+				"          ExchangeRate as double,",
+				"          ApprovalCode as string,",
+				"          FraudFlag as boolean,",
+				"          Narration as string,",
+				"          created_date as date,",
+				"          {created_by } as string,",
+				"          updated_date as date,",
+				"          updated_by as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> srcTransaction",
+				"srcTransaction keyGenerate(output(transaction_key as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogatecolumn",
+				"surrogatecolumn derive(TransactionDateTime = replace(\r",
+				"    concat( 'T', TransactionTime),\r",
+				"    'dddd, MMMM dd yyyy HH:mm:ss'\r",
+				"),",
+				"          TransactionDateTime_Local = 0,",
+				"          PreviousBalanceAfterTransaction = 0,",
+				"          Channel = 0,",
+				"          {BalanceInBaseCurrency } = 0) ~> Tranformation",
+				"Tranformation select(mapColumn(",
+				"          TransactionID,",
+				"          AccountID,",
+				"          CustomerID,",
+				"          TransactionDate,",
+				"          TransactionTime,",
+				"          TransactionType,",
+				"          Amount,",
+				"          BalanceAfterTransaction,",
+				"          Currency,",
+				"          Channel,",
+				"          MerchantCode,",
+				"          Location,",
+				"          Fee,",
+				"          ExchangeRate,",
+				"          ApprovalCode,",
+				"          FraudFlag,",
+				"          Narration,",
+				"          created_date,",
+				"          {created_by },",
+				"          updated_date,",
+				"          updated_by,",
+				"          transaction_key,",
+				"          TransactionDateTime,",
+				"          TransactionDateTime_Local,",
+				"          PreviousBalanceAfterTransaction,",
+				"          {BalanceInBaseCurrency }",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> Select",
+				"Select sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          AccountID as string,",
+				"          CustomerID as string,",
+				"          AccountNumber as string,",
+				"          AccountType as string,",
+				"          OpenDate as string,",
+				"          CloseDate as string,",
+				"          Status as string,",
+				"          BranchCode as string,",
+				"          Currency as string,",
+				"          InterestRate as string,",
+				"          CreditLimit as string,",
+				"          Balance as string,",
+				"          OverdraftLimit as string,",
+				"          IsJointAccount as string,",
+				"          Channel as string,",
+				"          LastActivityDate as string",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sinkTransaction"
 			]
 		}
 	}
