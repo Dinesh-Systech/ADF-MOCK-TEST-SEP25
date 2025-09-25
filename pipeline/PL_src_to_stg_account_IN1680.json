@@ -7,7 +7,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "CP_src_account_to_csv_account",
+						"activity": "DF_accounts",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -24,20 +24,6 @@
 				"typeProperties": {
 					"source": {
 						"type": "DelimitedTextSource",
-						"additionalColumns": [
-							{
-								"value": "$$FILEPATH"
-							},
-							{
-								"value": "$$FILEPATH"
-							},
-							{
-								"value": "$$FILEPATH"
-							},
-							{
-								"value": "$$FILEPATH"
-							}
-						],
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
 							"recursive": true,
@@ -85,8 +71,8 @@
 				]
 			},
 			{
-				"name": "CP_src_account_to_csv_account",
-				"type": "Copy",
+				"name": "DF_accounts",
+				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -97,330 +83,42 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"source": {
-						"type": "DelimitedTextSource",
-						"additionalColumns": [
-							{
-								"name": "created_date",
-								"value": {
-									"value": "@utcNow()",
-									"type": "Expression"
-								}
-							},
-							{
-								"name": "created_by",
-								"value": {
-									"value": "@pipeline().Pipeline",
-									"type": "Expression"
-								}
-							},
-							{
-								"name": "updated_date",
-								"value": {
-									"value": "@pipeline().Pipeline",
-									"type": "Expression"
-								}
-							},
-							{
-								"name": "updated_by",
-								"value": {
-									"value": "@pipeline().Pipeline",
-									"type": "Expression"
-								}
+					"dataflow": {
+						"referenceName": "DF_accounts",
+						"type": "DataFlowReference",
+						"parameters": {
+							"filename": {
+								"value": "'@{pipeline().parameters.file}'",
+								"type": "Expression"
 							}
-						],
-						"storeSettings": {
-							"type": "AzureBlobStorageReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
 						},
-						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
+						"datasetParameters": {
+							"SRCaccounts": {
+								"container": "adf-module-sep2025",
+								"folder": "SourceFiles",
+								"file": "account.csv"
+							},
+							"SNKaccounts": {
+								"container": "adf-module-sep2025",
+								"folder": "StageFiles/IN1680",
+								"file": "stg_account_mod_IN1680.csv"
+							}
 						}
 					},
-					"sink": {
-						"type": "DelimitedTextSink",
-						"storeSettings": {
-							"type": "AzureBlobStorageWriteSettings"
-						},
-						"formatSettings": {
-							"type": "DelimitedTextWriteSettings",
-							"quoteAllText": true,
-							"fileExtension": ".txt"
-						}
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
 					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"mappings": [
-							{
-								"source": {
-									"name": "AccountID",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "AccountID",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "CustomerID",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "CustomerID",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "AccountNumber",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "AccountNumber",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "AccountType",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "AccountType",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "OpenDate",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "OpenDate",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "CloseDate",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "CloseDate",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "Status",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "Status",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "BranchCode",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "BranchCode",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "Currency",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "Currency",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "InterestRate",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "InterestRate",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "CreditLimit",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "CreditLimit",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "Balance",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "Balance",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "OverdraftLimit",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "OverdraftLimit",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "IsJointAccount",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "IsJointAccount",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "Channel",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "Channel",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "LastActivityDate",
-									"type": "String",
-									"physicalType": "String"
-								},
-								"sink": {
-									"name": "LastActivityDate",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "created_date",
-									"type": "String"
-								},
-								"sink": {
-									"name": "created_date",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "created_by",
-									"type": "String"
-								},
-								"sink": {
-									"name": "created_by",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "updated_date",
-									"type": "String"
-								},
-								"sink": {
-									"name": "updated_date",
-									"type": "String",
-									"physicalType": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "updated_by",
-									"type": "String"
-								},
-								"sink": {
-									"name": "updated_by",
-									"type": "String",
-									"physicalType": "String"
-								}
-							}
-						],
-						"typeConversion": true,
-						"typeConversionSettings": {
-							"allowDataTruncation": true,
-							"treatBooleanAsNumber": false
-						}
-					}
-				},
-				"inputs": [
-					{
-						"referenceName": "DS_CSV_IN1680",
-						"type": "DatasetReference",
-						"parameters": {
-							"container": "adf-module-sep2025",
-							"folder": "SourceFiles",
-							"file": "account.csv"
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "DS_CSV_IN1680",
-						"type": "DatasetReference",
-						"parameters": {
-							"container": "adf-module-sep2025",
-							"folder": "StageFiles/IN1680",
-							"file": "stg_account_mod_IN1680.csv"
-						}
-					}
-				]
+					"traceLevel": "Fine"
+				}
 			}
 		],
+		"parameters": {
+			"file": {
+				"type": "string",
+				"defaultValue": "stg_account_mod_IN1680.csv"
+			}
+		},
 		"folder": {
 			"name": "Module/src_to_stg"
 		},

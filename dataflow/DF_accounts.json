@@ -1,0 +1,70 @@
+{
+	"name": "DF_accounts",
+	"properties": {
+		"folder": {
+			"name": "src_to_stg"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1680",
+						"type": "DatasetReference"
+					},
+					"name": "SRCaccounts"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1680",
+						"type": "DatasetReference"
+					},
+					"name": "SNKaccounts"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     filename as string",
+				"}",
+				"source(output(",
+				"          AccountID as integer,",
+				"          CustomerID as integer,",
+				"          AccountNumber as string,",
+				"          AccountType as string,",
+				"          OpenDate as date,",
+				"          CloseDate as date,",
+				"          Status as string,",
+				"          BranchCode as string,",
+				"          Currency as string,",
+				"          InterestRate as double,",
+				"          CreditLimit as double,",
+				"          Balance as double,",
+				"          OverdraftLimit as double,",
+				"          IsJointAccount as boolean,",
+				"          Channel as string,",
+				"          LastActivityDate as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SRCaccounts",
+				"SRCaccounts derive(created_at = currentTimestamp(),",
+				"          updated_at = currentTimestamp(),",
+				"          created_by = 'PL_src_to_stg_customers_IN1680',",
+				"          updated_by = 'PL_src_to_stg_customers_IN1680') ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[($filename)],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SNKaccounts"
+			]
+		}
+	}
+}

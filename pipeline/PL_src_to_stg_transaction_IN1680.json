@@ -5,7 +5,16 @@
 			{
 				"name": "CP_src_transaction_to_sql_transaction",
 				"type": "Copy",
-				"dependsOn": [],
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "DF_transaction_incremental",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -15,13 +24,62 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"enableStaging": false
-				}
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_CSV_IN1680",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_sqlserver_IN1680",
+						"type": "DatasetReference",
+						"parameters": {
+							"schemaname": "KRavi",
+							"tablename": "stg_transaction_mod_IN1680"
+						}
+					}
+				]
 			},
 			{
 				"name": "DF_transaction_incremental",
 				"type": "ExecuteDataFlow",
-				"dependsOn": [],
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "CP_fromsql",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -38,11 +96,17 @@
 							"SRCsrcTransaction": {
 								"container": "adf-module-sep2025",
 								"folder": "SourceFiles",
-								"file": "FactTransaction.csv"
+								"file": "transaction.csv"
 							},
 							"SRCtgtTransaction": {
 								"container": "adf-module-sep2025",
-								"folder": "StageFiles/IN1680"
+								"folder": "StageFiles/IN1680",
+								"file": "stg_transaction_mod_IN1680.csv"
+							},
+							"SNKstgtransaction": {
+								"container": "adf-module-sep2025",
+								"folder": "StageFiles/IN1680",
+								"file": "stg_transaction_mod_IN1680.csv"
 							}
 						}
 					},
@@ -52,6 +116,67 @@
 					},
 					"traceLevel": "Fine"
 				}
+			},
+			{
+				"name": "CP_fromsql",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_sqlserver_IN1680",
+						"type": "DatasetReference",
+						"parameters": {
+							"schemaname": "KRavi",
+							"tablename": "stg_transaction_mod_IN1680"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_CSV_IN1680",
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "adf-module-sep2025",
+							"folder": "StageFilestgt/IN1680",
+							"file": "stg_transaction_mod_IN1680.csv"
+						}
+					}
+				]
 			}
 		],
 		"folder": {
