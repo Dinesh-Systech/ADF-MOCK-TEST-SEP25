@@ -1,0 +1,45 @@
+{
+	"name": "PL_DF_ACC_FullLoad",
+	"properties": {
+		"activities": [
+			{
+				"name": "DF_Acc_FullLoad",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_Acc_fullload",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SrcAcc": {
+								"foldername": "StageFiles/IN1677",
+								"filename": "stg_DimAccount_mod_IN1677.csv"
+							},
+							"SnkstgDimAccountmodIN1677": {
+								"foldername": "TargetFiles/IN1677",
+								"filename": "Dim_account_mod_IN1677"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "MODULE_TEST_IN1677/STG TO TGT"
+		},
+		"annotations": []
+	}
+}

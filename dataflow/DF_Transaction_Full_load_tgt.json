@@ -1,0 +1,47 @@
+{
+	"name": "DF_Transaction_Full_load_tgt",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_BLOB_IN1677",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          TransactionID as short,",
+				"          AccountID as short,",
+				"          CustomerID as short,",
+				"          TransactionDate as string,",
+				"          TransactionTime as string,",
+				"          TransactionType as string,",
+				"          Amount as double,",
+				"          BalanceAfterTransaction as double,",
+				"          Currency as string,",
+				"          Channel as string,",
+				"          MerchantCode as string,",
+				"          Location as string,",
+				"          Fee as double,",
+				"          ExchangeRate as double,",
+				"          ApprovalCode as string,",
+				"          FraudFlag as boolean,",
+				"          Narration as string,",
+				"          {created_by } as string,",
+				"          created_date as timestamp,",
+				"          updated_date as string,",
+				"          updated_by as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1"
+			]
+		}
+	}
+}
