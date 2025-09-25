@@ -1,0 +1,17 @@
+{
+	"name": "DF_Trans_Incr",
+	"properties": {
+		"folder": {
+			"name": "SRC_STG"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				""
+			]
+		}
+	}
+}
