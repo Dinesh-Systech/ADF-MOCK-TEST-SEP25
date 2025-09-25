@@ -3,14 +3,10 @@
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_SQLSERVER_IN1689",
-			"type": "LinkedServiceReference"
-		},
-		"parameters": {
-			"database": {
-				"type": "string"
-			},
-			"tablename": {
-				"type": "string"
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"database": "ADF_Training",
+				"tablename": "stg_customers_MOD_IN1689"
 			}
 		},
 		"annotations": [],
@@ -118,8 +114,8 @@
 			}
 		],
 		"typeProperties": {
-			"schema": "VSri",
-			"table": "stg_transaction_IN1689"
+			"schema": "Vsri",
+			"table": "stg_customers_MOD_IN1689"
 		}
 	}
 }

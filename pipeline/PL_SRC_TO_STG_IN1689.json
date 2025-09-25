@@ -543,8 +543,10 @@
 				]
 			},
 			{
-				"name": "CD_BLOB_SQL",
+				"name": "CD_BLOB_SQL_ACCOUNT",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -566,7 +568,21 @@
 							"type": "DelimitedTextReadSettings"
 						}
 					},
-					"enableStaging": false
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
 				},
 				"inputs": [
 					{
@@ -576,6 +592,142 @@
 							"foldername": "StageFiles/IN1689/SRC_STG_FILES_IN1689",
 							"filename": "stg_account_IN1689.csv"
 						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL_SERVER_IN1689",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "CD_BLOB_SQL_TRANSACTION",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "CD_BLOB_SQL_ACCOUNT",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_MODULE_TEST_IN1689",
+						"type": "DatasetReference",
+						"parameters": {
+							"foldername": "StageFiles/IN1689/SRC_STG_FILES_IN1689",
+							"filename": "stg_transaction_IN1689.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL_SERVER_IN1689",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "CS_BLOB_TO_SQL_CUSTOMERS",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "CD_BLOB_SQL_TRANSACTION",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_MODULE_TEST_IN1689",
+						"type": "DatasetReference",
+						"parameters": {
+							"foldername": "StageFiles/IN1689/SRC_STG_FILES_IN1689",
+							"filename": "stg_customers_MOD_IN1689"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL_SERVER_IN1689",
+						"type": "DatasetReference"
 					}
 				]
 			}

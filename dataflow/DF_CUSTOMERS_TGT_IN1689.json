@@ -1,0 +1,69 @@
+{
+	"name": "DF_CUSTOMERS_TGT_IN1689",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_MODULE_TEST_IN1689",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_MODULE_TEST_IN1689",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CustomerID as short,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          Gender as string,",
+				"          DateOfBirth as string,",
+				"          Email as string,",
+				"          Phone as string,",
+				"          AddressLine1 as string,",
+				"          AddressLine2 as string,",
+				"          City as string,",
+				"          State as string,",
+				"          Country as string,",
+				"          PostalCode as string,",
+				"          MaritalStatus as string,",
+				"          Occupation as string,",
+				"          AnnualIncome as string,",
+				"          RiskCategory as string,",
+				"          {created_by } as string,",
+				"          created_date as timestamp,",
+				"          updated_date as string,",
+				"          updated_by as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 select(skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 derive() ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

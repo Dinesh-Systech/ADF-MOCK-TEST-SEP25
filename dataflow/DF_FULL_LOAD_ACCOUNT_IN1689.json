@@ -1,0 +1,42 @@
+{
+	"name": "DF_FULL_LOAD_ACCOUNT_IN1689",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_MODULE_TEST_IN1689",
+						"type": "DatasetReference"
+					},
+					"name": "SRCaccountTGT"
+				}
+			],
+			"sinks": [
+				{
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DCaccount"
+				},
+				{
+					"name": "SelectAccount"
+				}
+			],
+			"scriptLines": [
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SRCaccountTGT",
+				"SelectAccount derive() ~> DCaccount",
+				"SRCaccountTGT select(skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectAccount",
+				"DCaccount sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

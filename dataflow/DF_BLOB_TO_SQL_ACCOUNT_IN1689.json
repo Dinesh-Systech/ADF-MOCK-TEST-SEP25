@@ -1,0 +1,92 @@
+{
+	"name": "DF_BLOB_TO_SQL_ACCOUNT_IN1689",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_MODULE_TEST_IN1689",
+						"type": "DatasetReference"
+					},
+					"name": "srcBLOBtosql"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_SQL_SERVER_IN1689",
+						"type": "DatasetReference"
+					},
+					"name": "SNKsql"
+				}
+			],
+			"transformations": [
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          AccountID as short,",
+				"          CustomerID as short,",
+				"          AccountNumber as string,",
+				"          AccountType as string,",
+				"          OpenDate as date,",
+				"          CloseDate as date,",
+				"          Status as string,",
+				"          BranchCode as string,",
+				"          Currency as string,",
+				"          InterestRate as double,",
+				"          CreditLimit as double,",
+				"          Balance as double,",
+				"          OverdraftLimit as double,",
+				"          IsJointAccount as boolean,",
+				"          Channel as string,",
+				"          LastActivityDate as date,",
+				"          created_date as string,",
+				"          created_by as string,",
+				"          updated_date as string,",
+				"          updated_by as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> srcBLOBtosql",
+				"srcBLOBtosql select(skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          TransactionID as integer,",
+				"          AccountID as integer,",
+				"          CustomerID as integer,",
+				"          TransactionDate as date,",
+				"          TransactionTime as timestamp,",
+				"          TransactionType as string,",
+				"          Amount as decimal(10,2),",
+				"          BalanceAfterTransaction as decimal(10,2),",
+				"          Currency as string,",
+				"          Channel as string,",
+				"          MerchantCode as string,",
+				"          Location as string,",
+				"          Fee as decimal(10,2),",
+				"          ExchangeRate as decimal(10,2),",
+				"          ApprovalCode as string,",
+				"          FraudFlag as boolean,",
+				"          Narration as string,",
+				"          created_date as timestamp,",
+				"          created_by as string,",
+				"          updated_date as timestamp,",
+				"          updated_by as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SNKsql"
+			]
+		}
+	}
+}
