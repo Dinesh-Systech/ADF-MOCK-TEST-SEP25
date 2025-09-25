@@ -1,0 +1,125 @@
+{
+	"name": "DS_SQL_SERVER_IN1689",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SQLSERVER_IN1689",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"database": {
+				"type": "string"
+			},
+			"tablename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "TransactionID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AccountID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CustomerID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TransactionDate",
+				"type": "date"
+			},
+			{
+				"name": "TransactionTime",
+				"type": "time",
+				"scale": 7
+			},
+			{
+				"name": "TransactionType",
+				"type": "varchar"
+			},
+			{
+				"name": "Amount",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "BalanceAfterTransaction",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "Currency",
+				"type": "varchar"
+			},
+			{
+				"name": "Channel",
+				"type": "varchar"
+			},
+			{
+				"name": "MerchantCode",
+				"type": "varchar"
+			},
+			{
+				"name": "Location",
+				"type": "varchar"
+			},
+			{
+				"name": "Fee",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "ExchangeRate",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "ApprovalCode",
+				"type": "varchar"
+			},
+			{
+				"name": "FraudFlag",
+				"type": "bit"
+			},
+			{
+				"name": "Narration",
+				"type": "varchar"
+			},
+			{
+				"name": "created_date",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "created_by",
+				"type": "varchar"
+			},
+			{
+				"name": "updated_date",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "updated_by",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "VSri",
+			"table": "stg_transaction_IN1689"
+		}
+	}
+}
