@@ -1,0 +1,17 @@
+{
+	"name": "DF_account",
+	"properties": {
+		"folder": {
+			"name": "STG_DW"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				""
+			]
+		}
+	}
+}
