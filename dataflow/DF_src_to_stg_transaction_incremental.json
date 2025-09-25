@@ -1,0 +1,45 @@
+{
+	"name": "DF_src_to_stg_transaction_incremental",
+	"properties": {
+		"folder": {
+			"name": "src_to_stg"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1680",
+						"type": "DatasetReference"
+					},
+					"name": "SRCsrcTransaction"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1680",
+						"type": "DatasetReference"
+					},
+					"name": "SRCtgtTransaction"
+				}
+			],
+			"sinks": [
+				{
+					"name": "SNKstgtransaction"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SRCsrcTransaction",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SRCtgtTransaction",
+				"SRCsrcTransaction sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SNKstgtransaction"
+			]
+		}
+	}
+}
