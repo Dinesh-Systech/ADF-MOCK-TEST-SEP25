@@ -6,11 +6,43 @@
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1685",
+						"type": "DatasetReference"
+					},
+					"name": "SRCaccount"
+				}
+			],
 			"sinks": [],
 			"transformations": [],
 			"scriptLines": [
-				""
+				"source(output(",
+				"          AccountID as short,",
+				"          CustomerID as short,",
+				"          AccountNumber as string,",
+				"          AccountType as string,",
+				"          OpenDate as date,",
+				"          CloseDate as date,",
+				"          Status as string,",
+				"          BranchCode as string,",
+				"          Currency as string,",
+				"          InterestRate as double,",
+				"          CreditLimit as double,",
+				"          Balance as double,",
+				"          OverdraftLimit as double,",
+				"          IsJointAccount as boolean,",
+				"          Channel as string,",
+				"          LastActivityDate as date,",
+				"          {25-09-2025 14:16:3316} as timestamp,",
+				"          PL_SRC_STG17 as string,",
+				"          {25-09-2025 14:16:3318} as timestamp,",
+				"          PL_SRC_STG19 as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SRCaccount"
 			]
 		}
 	}
