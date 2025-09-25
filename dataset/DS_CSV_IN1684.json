@@ -1,0 +1,38 @@
+{
+	"name": "DS_CSV_IN1684",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Blob_IN1684",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"PR_Directory": {
+				"type": "string"
+			},
+			"PR_Filename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().PR_Filename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().PR_Directory",
+					"type": "Expression"
+				},
+				"container": "adf-module-sep2025"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
