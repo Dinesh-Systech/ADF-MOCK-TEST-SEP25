@@ -16,7 +16,11 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "FullName"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          CustomerID as integer,",
@@ -39,7 +43,8 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> SRCcustomers"
+				"     ignoreNoFilesFound: false) ~> SRCcustomers",
+				"SRCcustomers derive(FullName = ERROR_FUNCTION('iif(Gender==__SINGLE_QUOTE__Male__SINGLE_QUOTE__&& MaritalStatus ==__SINGLE_QUOTE__Married__SINGLE_QUOTE__,concat(__SINGLE_QUOTE__Mr.__SINGLE_QUOTE__, FirstName,LastName),)')) ~> FullName"
 			]
 		}
 	}
