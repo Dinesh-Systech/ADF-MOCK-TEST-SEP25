@@ -1,5 +1,5 @@
 {
-	"name": "DF_account",
+	"name": "DF_transaction",
 	"properties": {
 		"folder": {
 			"name": "STG_DW"
