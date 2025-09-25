@@ -1,0 +1,24 @@
+{
+	"name": "DS_OnPrem_IN1675",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_OnPrem_IN1675",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"TableName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "DMuthuku",
+			"table": {
+				"value": "@dataset().TableName",
+				"type": "Expression"
+			}
+		}
+	}
+}
