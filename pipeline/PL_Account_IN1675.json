@@ -21,7 +21,7 @@
 						"datasetParameters": {
 							"SrcAccounts": {
 								"container": "adf-module-sep2025",
-								"folder": "Target/IN1675",
+								"folder": "TargetFiles/IN1675",
 								"file": "Stg_Account_Mod_IN1675"
 							},
 							"TgtAccounts": {
