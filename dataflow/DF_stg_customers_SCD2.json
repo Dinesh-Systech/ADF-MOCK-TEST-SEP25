@@ -1,0 +1,243 @@
+{
+	"name": "DF_stg_customers_SCD2",
+	"properties": {
+		"folder": {
+			"name": "Stage to Target"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1684",
+						"type": "DatasetReference"
+					},
+					"name": "SRCStgCustomers"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1684",
+						"type": "DatasetReference"
+					},
+					"name": "TGTDimCustomers"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1684",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "selectSRC"
+				},
+				{
+					"name": "leftSRCCustomersAndTGTCustomers"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "union1"
+				},
+				{
+					"name": "selectTGT"
+				},
+				{
+					"name": "transformationAuditNewColumns"
+				},
+				{
+					"name": "selectSRCColumns"
+				},
+				{
+					"name": "transformation2"
+				},
+				{
+					"name": "selectTGTColumns"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CustomerID as integer,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          Gender as string,",
+				"          DateOfBirth as date,",
+				"          Email as string,",
+				"          Phone as string,",
+				"          AddressLine1 as string,",
+				"          AddressLine2 as string,",
+				"          City as string,",
+				"          State as string,",
+				"          Country as string,",
+				"          PostalCode as integer,",
+				"          MaritalStatus as string,",
+				"          Occupation as string,",
+				"          AnnualIncome as double,",
+				"          RiskCategory as string,",
+				"          {created by} as string,",
+				"          {created date} as date,",
+				"          {updated date} as date,",
+				"          {updated by} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SRCStgCustomers",
+				"source(output(",
+				"          CustomerID as integer,",
+				"          customer_key as integer,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          FullName as string,",
+				"          Gender as string,",
+				"          DateOfBirth as date,",
+				"          Age as string,",
+				"          Email as string,",
+				"          Phone as string,",
+				"          AddressLine1 as string,",
+				"          AddressLine2 as string,",
+				"          City as string,",
+				"          State as string,",
+				"          Country as string,",
+				"          PostalCode as integer,",
+				"          MaritalStatus as string,",
+				"          Occupation as string,",
+				"          Sector as string,",
+				"          AnnualIncome as double,",
+				"          RiskCategory as string,",
+				"          {created by} as string,",
+				"          {created date} as date,",
+				"          {updated date} as date,",
+				"          {updated by} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> TGTDimCustomers",
+				"SRCStgCustomers select(mapColumn(",
+				"          each(match(true()),",
+				"               \"SRC_\"+$$ = $$)",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectSRC",
+				"selectSRC, selectTGT join(SRC_CustomerID == TGT_CustomerID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> leftSRCCustomersAndTGTCustomers",
+				"leftSRCCustomersAndTGTCustomers split(isNull(TGT_CustomerID) || (SRC_CustomerID==TGT_CustomerID && (SRC_State != TGT_State)),",
+				"     SRC_CustomerID==TGT_CustomerID && (SRC_State != TGT_State),",
+				"     disjoint: true) ~> split1@(insert, update)",
+				"selectSRCColumns, selectTGTColumns union(byName: true)~> union1",
+				"TGTDimCustomers select(mapColumn(",
+				"          each(match(true()),",
+				"               \"TGT_\"+$$ = $$)",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectTGT",
+				"split1@insert derive({SRC_created by} = {SRC_created by},",
+				"          {SRC_created date} = currentDate(),",
+				"          {SRC_updated date} = {SRC_updated date},",
+				"          {SRC_updated by} = currentDate(),",
+				"          FullName = case(SRC_Gender == \"Male\",\"Mr.\",\r",
+				"    (SRC_Gender == \"Female\" && (SRC_MaritalStatus == \"Married\")),\"Mrs.\",\r",
+				"        SRC_Gender == \"Female\" && (SRC_MaritalStatus == \"Single\" || SRC_MaritalStatus == \"Divorced\" || SRC_MaritalStatus == \"Widowed\"),\"Ms.\",\"NULL\"),",
+				"          SRC_Gender = case(SRC_Gender == \"M\", \"Male\",\r",
+				"    SRC_Gender == \"F\",\"Female\",\r",
+				"        SRC_Gender == \"O\", \"Other\",\"UNK\"),",
+				"          Age = currentDate() - SRC_DateOfBirth,",
+				"          Sector = case(SRC_Occupation == \"Teacher\", \"Education\",\r",
+				"    SRC_Occupation == \"Business analyst\" || SRC_Occupation == \"Manager\", \"IT\",\r",
+				"        SRC_Occupation == \"Engineer\", \"Engineering\")) ~> transformationAuditNewColumns",
+				"transformationAuditNewColumns select(mapColumn(",
+				"          CustomerID = SRC_CustomerID,",
+				"          FirstName = SRC_FirstName,",
+				"          LastName = SRC_LastName,",
+				"          Gender = SRC_Gender,",
+				"          DateOfBirth = SRC_DateOfBirth,",
+				"          Email = SRC_Email,",
+				"          Phone = SRC_Phone,",
+				"          AddressLine1 = SRC_AddressLine1,",
+				"          AddressLine2 = SRC_AddressLine2,",
+				"          City = SRC_City,",
+				"          State = SRC_State,",
+				"          Country = SRC_Country,",
+				"          PostalCode = SRC_PostalCode,",
+				"          MaritalStatus = SRC_MaritalStatus,",
+				"          Occupation = SRC_Occupation,",
+				"          AnnualIncome = SRC_AnnualIncome,",
+				"          RiskCategory = SRC_RiskCategory,",
+				"          {created by} = {SRC_created by},",
+				"          {created date} = {SRC_created date},",
+				"          {updated date} = {SRC_updated date},",
+				"          {updated by} = {SRC_updated by}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectSRCColumns",
+				"split1@update derive({TGT_updated date} = currentDate(),",
+				"          {TGT_updated by} = {SRC_updated by}) ~> transformation2",
+				"transformation2 select(mapColumn(",
+				"          SRC_CustomerID,",
+				"          TGT_CustomerID,",
+				"          TGT_customer_key,",
+				"          TGT_FirstName,",
+				"          TGT_LastName,",
+				"          TGT_FullName,",
+				"          TGT_Gender,",
+				"          TGT_DateOfBirth,",
+				"          TGT_Age,",
+				"          TGT_Email,",
+				"          TGT_Phone,",
+				"          TGT_AddressLine1,",
+				"          TGT_AddressLine2,",
+				"          TGT_City,",
+				"          TGT_State,",
+				"          TGT_Country,",
+				"          TGT_PostalCode,",
+				"          TGT_MaritalStatus,",
+				"          TGT_Occupation,",
+				"          TGT_Sector,",
+				"          TGT_AnnualIncome,",
+				"          TGT_RiskCategory,",
+				"          {TGT_created by},",
+				"          {TGT_created date}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectTGTColumns",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Dim_Customers_mod_IN1684'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          CustomerID,",
+				"          FirstName,",
+				"          LastName,",
+				"          Gender,",
+				"          DateOfBirth,",
+				"          Email,",
+				"          Phone,",
+				"          AddressLine1,",
+				"          AddressLine2,",
+				"          City,",
+				"          State,",
+				"          Country,",
+				"          PostalCode,",
+				"          MaritalStatus,",
+				"          Occupation,",
+				"          AnnualIncome,",
+				"          RiskCategory,",
+				"          {created by},",
+				"          {created date},",
+				"          {updated date},",
+				"          {updated by},",
+				"          SRC_CustomerID",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}
