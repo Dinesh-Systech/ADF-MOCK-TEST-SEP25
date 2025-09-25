@@ -21,7 +21,7 @@
 						"referenceName": "DS_CSV_IN1685",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "SNKaccount"
 				}
 			],
 			"transformations": [
@@ -57,7 +57,7 @@
 				"          OverdraftLimit as double,",
 				"          IsJointAccount as boolean,",
 				"          Channel as string,",
-				"          LastActivityDate as date,",
+				"          LastActivityDate as timestamp,",
 				"          {25-09-2025 14:16:3316} as timestamp,",
 				"          PL_SRC_STG17 as string,",
 				"          {25-09-2025 14:16:3318} as timestamp,",
@@ -93,9 +93,7 @@
 				"SELECTsrc derive(each(match(type=='string'), $$ = iifNull($$, 'UNK')),",
 				"          each(match(type=='integer'), $$ = iifNull($#, 0)),",
 				"          each(match(type=='timestamp'), $$ = iifNull($$, toTimestamp('1900-01-01 00:00:00', 'dd-MM-yyyy 00:00:00')))) ~> NULL",
-				"NULL derive(SharedLiablityRisk = iif(IsJointAccount==true() && OverdraftLimit>10000, 'SharedLiablityRisk', iif(IsJointAccount==true() && OverdraftLimit<=10000, 'Joint account-normal risk', iif(IsJointAccount==false() && OverdraftLimit>10000, 'single account-high exposure', 'low risk'))),",
-				"          DaysSinceLastActivity = minus(LastActivityDate, currentTimestamp())\r",
-				") ~> TRANSFORMATIONS",
+				"NULL derive(SharedLiablityRisk = iif(IsJointAccount==true() && OverdraftLimit>10000, 'SharedLiablityRisk', iif(IsJointAccount==true() && OverdraftLimit<=10000, 'Joint account-normal risk', iif(IsJointAccount==false() && OverdraftLimit>10000, 'single account-high exposure', 'low risk')))) ~> TRANSFORMATIONS",
 				"TRANSFORMATIONS keyGenerate(output(account_key as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> SURROGATEaccountkey",
@@ -104,7 +102,7 @@
 				"     partitionFileNames:['mod_dim_account_IN1685.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     partitionBy('hash', 1)) ~> SNKaccount"
 			]
 		}
 	}
