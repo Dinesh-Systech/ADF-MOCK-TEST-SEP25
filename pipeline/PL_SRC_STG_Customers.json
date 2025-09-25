@@ -1,0 +1,676 @@
+{
+	"name": "PL_SRC_STG_Customers",
+	"properties": {
+		"activities": [
+			{
+				"name": "CP_Customers_stg_customers_mod_IN1684",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"additionalColumns": [
+							{
+								"name": "pipeline name",
+								"value": {
+									"value": "@pipeline().Pipeline",
+									"type": "Expression"
+								}
+							},
+							{
+								"name": "current date",
+								"value": {
+									"value": "@formatDateTime(utcNow())",
+									"type": "Expression"
+								}
+							},
+							{
+								"name": "current date1",
+								"value": {
+									"value": "@formatDateTime(utcNow())",
+									"type": "Expression"
+								}
+							},
+							{
+								"name": "pipeline name1",
+								"value": {
+									"value": "@pipeline().Pipeline",
+									"type": "Expression"
+								}
+							}
+						],
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "CustomerID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CustomerID",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "FirstName",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "FirstName",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LastName",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "LastName",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Gender",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Gender",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DateOfBirth",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "DateOfBirth",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Email",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Email",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Phone",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Phone",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AddressLine1",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AddressLine1",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AddressLine2",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AddressLine2",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "City",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "City",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "State",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "State",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Country",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Country",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PostalCode",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "PostalCode",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MaritalStatus",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "MaritalStatus",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Occupation",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Occupation",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AnnualIncome",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AnnualIncome",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "RiskCategory",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "RiskCategory",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "pipeline name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "created by",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "current date",
+									"type": "String"
+								},
+								"sink": {
+									"name": "created date",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "current date1",
+									"type": "String"
+								},
+								"sink": {
+									"name": "updated date",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "pipeline name1",
+									"type": "String"
+								},
+								"sink": {
+									"name": "updated by",
+									"physicalType": "String"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_CSV_IN1684",
+						"type": "DatasetReference",
+						"parameters": {
+							"PR_Directory": "SourceFiles",
+							"PR_Filename": "DimCustomer.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_CSV_IN1684",
+						"type": "DatasetReference",
+						"parameters": {
+							"PR_Directory": "StageFiles/IN1684",
+							"PR_Filename": "stg_customers_mod_IN1684"
+						}
+					}
+				]
+			},
+			{
+				"name": "CP_stg_cutomers_mod_IN1684_to_SQL_server",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "CP_Customers_stg_customers_mod_IN1684",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "CustomerID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CustomerID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "FirstName",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "FirstName",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "LastName",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "LastName",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Gender",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Gender",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "DateOfBirth",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "DateOfBirth",
+									"type": "Date",
+									"physicalType": "date"
+								}
+							},
+							{
+								"source": {
+									"name": "Email",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Email",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Phone",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Phone",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "AddressLine1",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AddressLine1",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "AddressLine2",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AddressLine2",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "City",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "City",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "State",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "State",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Country",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Country",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "PostalCode",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "PostalCode",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "MaritalStatus",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "MaritalStatus",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Occupation",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Occupation",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "AnnualIncome",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AnnualIncome",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 2,
+									"precision": 10
+								}
+							},
+							{
+								"source": {
+									"name": "RiskCategory",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "RiskCategory",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "created by",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "created by",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "created date",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "created date",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "updated date",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "updated date",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "updated by",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "updated by",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_CSV_IN1684",
+						"type": "DatasetReference",
+						"parameters": {
+							"PR_Directory": "StageFiles/IN1684",
+							"PR_Filename": "stg_customers_mod_IN1684"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL_IN1684",
+						"type": "DatasetReference",
+						"parameters": {
+							"PR_Tablename": "stg_customers_mod_IN1684"
+						}
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "Module test/SRC to STG"
+		},
+		"annotations": []
+	}
+}

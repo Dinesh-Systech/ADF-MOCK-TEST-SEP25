@@ -1,0 +1,9 @@
+{
+	"name": "PL_SRC_STG_Transaction",
+	"properties": {
+		"folder": {
+			"name": "Module test/SRC to STG"
+		},
+		"annotations": []
+	}
+}
