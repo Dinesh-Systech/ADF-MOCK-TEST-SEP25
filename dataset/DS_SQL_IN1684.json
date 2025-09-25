@@ -8,19 +8,13 @@
 		"parameters": {
 			"PR_Tablename": {
 				"type": "string"
-			},
-			"PR_Schema": {
-				"type": "string"
 			}
 		},
 		"annotations": [],
 		"type": "SqlServerTable",
 		"schema": [],
 		"typeProperties": {
-			"schema": {
-				"value": "@dataset().PR_Schema",
-				"type": "Expression"
-			},
+			"schema": "PMahendi",
 			"table": {
 				"value": "@dataset().PR_Tablename",
 				"type": "Expression"
