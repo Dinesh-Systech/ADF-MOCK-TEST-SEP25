@@ -1,0 +1,135 @@
+{
+	"name": "DF_Accounts_IN1675",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1675",
+						"type": "DatasetReference"
+					},
+					"name": "SrcAccounts"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1675",
+						"type": "DatasetReference"
+					},
+					"name": "TgtAccounts"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1675",
+						"type": "DatasetReference"
+					},
+					"name": "DimAccounts"
+				}
+			],
+			"transformations": [
+				{
+					"name": "join"
+				},
+				{
+					"name": "AccountKey"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          AccountID as short,",
+				"          CustomerID as short,",
+				"          AccountNumber as string,",
+				"          AccountType as string,",
+				"          OpenDate as date,",
+				"          CloseDate as date,",
+				"          Status as string,",
+				"          BranchCode as string,",
+				"          Currency as string,",
+				"          InterestRate as double,",
+				"          CreditLimit as double,",
+				"          Balance as double,",
+				"          OverdraftLimit as double,",
+				"          IsJointAccount as boolean,",
+				"          Channel as string,",
+				"          LastActivityDate as date,",
+				"          Created_by as string,",
+				"          Created_date as string,",
+				"          Updated_date as string,",
+				"          Updated_by as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SrcAccounts",
+				"source(output(",
+				"          AccountID as integer,",
+				"          AccountKey as integer,",
+				"          CustomerID as string,",
+				"          AccountNumber as string,",
+				"          AccountType as string,",
+				"          OpenDate as string,",
+				"          Account_Tenure as string,",
+				"          CloseDate as string,",
+				"          Status as string,",
+				"          BranchCode as string,",
+				"          Currency as string,",
+				"          InterestRate as string,",
+				"          EffectiveAnnualYield as string,",
+				"          CreditLimit as string,",
+				"          Balance as string,",
+				"          OverdraftLimit as string,",
+				"          IsJointAccount as string,",
+				"          SharedLiabilityRisk as string,",
+				"          Channel as string,",
+				"          LastActivityDate as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> TgtAccounts",
+				"AccountKey, TgtAccounts join(SrcAccounts@AccountID == TgtAccounts@AccountID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join",
+				"SrcAccounts keyGenerate(output(AccountKey as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> AccountKey",
+				"join select(mapColumn(",
+				"          AccountID = SrcAccounts@AccountID,",
+				"          CustomerID = SrcAccounts@CustomerID,",
+				"          AccountNumber = SrcAccounts@AccountNumber,",
+				"          AccountType = SrcAccounts@AccountType,",
+				"          OpenDate = SrcAccounts@OpenDate,",
+				"          CloseDate = SrcAccounts@CloseDate,",
+				"          Status = SrcAccounts@Status,",
+				"          BranchCode = SrcAccounts@BranchCode,",
+				"          Currency = SrcAccounts@Currency,",
+				"          InterestRate = SrcAccounts@InterestRate,",
+				"          CreditLimit = SrcAccounts@CreditLimit,",
+				"          Balance = SrcAccounts@Balance,",
+				"          OverdraftLimit = SrcAccounts@OverdraftLimit,",
+				"          IsJointAccount = SrcAccounts@IsJointAccount,",
+				"          Channel = SrcAccounts@Channel,",
+				"          LastActivityDate = SrcAccounts@LastActivityDate,",
+				"          Created_by,",
+				"          Created_date,",
+				"          Updated_date,",
+				"          Updated_by,",
+				"          AccountKey = AccountKey@AccountKey",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Dim_Accounts_IN1675'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DimAccounts"
+			]
+		}
+	}
+}

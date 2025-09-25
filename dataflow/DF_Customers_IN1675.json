@@ -9,15 +9,249 @@
 						"referenceName": "DS_CSV_IN1675",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "SrcCustomers"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1675",
+						"type": "DatasetReference"
+					},
+					"name": "TgtCustomers"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1675",
+						"type": "DatasetReference"
+					},
+					"name": "DimCustomers"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Join"
+				},
+				{
+					"name": "CustomerKey"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "alterRow1"
+				},
+				{
+					"name": "alterRow2"
+				},
+				{
+					"name": "select3"
+				},
+				{
+					"name": "select4"
+				},
+				{
+					"name": "select5"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "derivedColumn3"
+				},
+				{
+					"name": "union1"
+				},
+				{
+					"name": "derivedColumn4"
+				}
+			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          CustomerID as integer,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          Gender as string,",
+				"          DateOfBirth as string,",
+				"          Email as string,",
+				"          Phone as string,",
+				"          AddressLine1 as string,",
+				"          AddressLine2 as string,",
+				"          City as string,",
+				"          State as string,",
+				"          Country as string,",
+				"          PostalCode as integer,",
+				"          MaritalStatus as string,",
+				"          Occupation as string,",
+				"          AnnualIncome as double,",
+				"          RiskCategory as string,",
+				"          Created_by as string,",
+				"          Created_date as string,",
+				"          Updated_date as string,",
+				"          Updated_by as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1"
+				"     ignoreNoFilesFound: false) ~> SrcCustomers",
+				"source(output(",
+				"          CustomerID as integer,",
+				"          CustomerKey as integer,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          FullName as string,",
+				"          Gender as string,",
+				"          DateOfBirth as date,",
+				"          Age as integer,",
+				"          Email as string,",
+				"          Phone as string,",
+				"          AddressLine1 as string,",
+				"          AddressLine2 as string,",
+				"          City as string,",
+				"          State as string,",
+				"          Country as string,",
+				"          PostalCode as integer,",
+				"          MaritalStatus as string,",
+				"          Occupation as string,",
+				"          Sector as string,",
+				"          AnnualIncome as double,",
+				"          RiskCategory as string,",
+				"          Created_by as string,",
+				"          Created_date as timestamp,",
+				"          Updated_date as timestamp,",
+				"          Updated_by as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> TgtCustomers",
+				"CustomerKey, select2 join(SrcCustomerID == TgtCustomerID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> Join",
+				"select1 keyGenerate(output(Customer_Key as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> CustomerKey",
+				"SrcCustomers select(mapColumn(",
+				"          each(match(true()),",
+				"               'Src'+$$ = $$)",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"TgtCustomers select(mapColumn(",
+				"          each(match(true()),",
+				"               'Tgt'+$$ = $$)",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"Join split(isNull(TgtCustomerID) || (SrcCustomerID==TgtCustomerID && SrcState!=TgtState),",
+				"     !isNull(TgtCustomerID)&& (SrcCustomerID==TgtCustomerID && SrcState!=TgtState),",
+				"     SrcCustomerID==TgtCustomerID && SrcState==TgtState,",
+				"     disjoint: true) ~> split1@(Insert, Update, Existing)",
+				"split1@Insert alterRow(insertIf(true())) ~> alterRow1",
+				"split1@Update alterRow(updateIf(true())) ~> alterRow2",
+				"derivedColumn3 select(mapColumn(",
+				"          CustomerID = TgtCustomerID,",
+				"          Customer_Key,",
+				"          FirstName = TgtFirstName,",
+				"          LastName = TgtLastName,",
+				"          FullName = TgtFullName,",
+				"          Gender = TgtGender,",
+				"          DateOfBirth = TgtDateOfBirth,",
+				"          Age = TgtAge,",
+				"          Email = TgtEmail,",
+				"          Phone = TgtPhone,",
+				"          AddressLine1 = TgtAddressLine1,",
+				"          AddressLine2 = TgtAddressLine2,",
+				"          City = TgtCity,",
+				"          State = TgtState,",
+				"          Country = TgtCountry,",
+				"          PostalCode = TgtPostalCode,",
+				"          MaritalStatus = TgtMaritalStatus,",
+				"          Occupation = TgtOccupation,",
+				"          Sector = TgtSector,",
+				"          AnnualIncome = TgtAnnualIncome,",
+				"          RiskCategory = TgtRiskCategory,",
+				"          Created_by = TgtCreated_by,",
+				"          Created_date = TgtCreated_date,",
+				"          Updated_date = TgtUpdated_date,",
+				"          Updated_by = TgtUpdated_by",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"derivedColumn2 select(mapColumn(",
+				"          CustomerID = TgtCustomerID,",
+				"          Customer_Key,",
+				"          FirstName = TgtFirstName,",
+				"          LastName = TgtLastName,",
+				"          FullName = TgtFullName,",
+				"          Gender = TgtGender,",
+				"          DateOfBirth = TgtDateOfBirth,",
+				"          Age = TgtAge,",
+				"          Email = TgtEmail,",
+				"          Phone = TgtPhone,",
+				"          AddressLine1 = TgtAddressLine1,",
+				"          AddressLine2 = TgtAddressLine2,",
+				"          City = TgtCity,",
+				"          State = TgtState,",
+				"          Country = TgtCountry,",
+				"          PostalCode = TgtPostalCode,",
+				"          MaritalStatus = TgtMaritalStatus,",
+				"          Occupation = TgtOccupation,",
+				"          Sector = TgtSector,",
+				"          AnnualIncome = TgtAnnualIncome,",
+				"          RiskCategory = TgtRiskCategory,",
+				"          Created_by = TgtCreated_by,",
+				"          Created_date = TgtCreated_date,",
+				"          Updated_date = TgtUpdated_date,",
+				"          Updated_by = TgtUpdated_by",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select4",
+				"derivedColumn4 select(mapColumn(",
+				"          CustomerID = SrcCustomerID,",
+				"          Customer_Key,",
+				"          FirstName = SrcFirstName,",
+				"          LastName = SrcLastName,",
+				"          FullName = TgtFullName,",
+				"          Gender = SrcGender,",
+				"          DateOfBirth = SrcDateOfBirth,",
+				"          Age = TgtAge,",
+				"          Email = SrcEmail,",
+				"          Phone = SrcPhone,",
+				"          AddressLine1 = SrcAddressLine1,",
+				"          AddressLine2 = SrcAddressLine2,",
+				"          City = SrcCity,",
+				"          State = SrcState,",
+				"          Country = SrcCountry,",
+				"          PostalCode = SrcPostalCode,",
+				"          MaritalStatus = SrcMaritalStatus,",
+				"          Occupation = SrcOccupation,",
+				"          Sector = TgtSector,",
+				"          AnnualIncome = SrcAnnualIncome,",
+				"          RiskCategory = SrcRiskCategory,",
+				"          Created_by = SrcCreated_by,",
+				"          Created_date = SrcCreated_date,",
+				"          Updated_date = SrcUpdated_date,",
+				"          Updated_by = SrcUpdated_by",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select5",
+				"alterRow2 derive(isActive = 0) ~> derivedColumn2",
+				"split1@Existing derive(isActive = 1) ~> derivedColumn3",
+				"select5 union(byName: true)~> union1",
+				"alterRow1 derive(isActive = 1) ~> derivedColumn4",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Dim_Customers_IN1675.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DimCustomers"
 			]
 		}
 	}

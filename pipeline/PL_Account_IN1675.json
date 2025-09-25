@@ -1,0 +1,119 @@
+{
+	"name": "PL_Account_IN1675",
+	"properties": {
+		"activities": [
+			{
+				"name": "DF_Accounts",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_Accounts_IN1675",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SrcAccounts": {
+								"container": "adf-module-sep2025",
+								"folder": "Target/IN1675",
+								"file": "Stg_Account_Mod_IN1675"
+							},
+							"TgtAccounts": {
+								"container": "adf-module-sep2025",
+								"folder": "Target/IN1675/Target",
+								"file": "dim_Account_Mod_IN1675.csv"
+							},
+							"DimAccounts": {
+								"container": "adf-module-sep2025",
+								"folder": "Target/IN1675/Dim",
+								"file": "Dim_Accounts_IN1675.csv"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "CP_Accounts",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "DF_Accounts",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_CSV_IN1675",
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "adf-module-sep2025",
+							"folder": "Target/IN1675/Dim",
+							"file": "Dim_Accounts_IN1675.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_OnPrem_IN1675",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": "Dim_Accounts_IN1675"
+						}
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "MODULE_TEST_IN1675"
+		},
+		"annotations": []
+	}
+}
