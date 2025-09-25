@@ -1,0 +1,42 @@
+{
+	"name": "PL_transactions",
+	"properties": {
+		"activities": [
+			{
+				"name": "DF_transaction",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_transaction",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SRCtransactions": {
+								"Container": "adf-module-sep2025",
+								"Directory": "StageFiles/IN1685/IN1685_stg",
+								"File": "mod_stg_transaction_IN1685.csv"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "STG_DW"
+		},
+		"annotations": []
+	}
+}
