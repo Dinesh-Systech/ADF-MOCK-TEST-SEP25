@@ -73,6 +73,8 @@
 			{
 				"name": "DF_transaction_incremental",
 				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "CP_fromsql",
@@ -127,6 +129,8 @@
 			{
 				"name": "CP_fromsql",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -138,9 +142,15 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "SqlServerSource",
-						"queryTimeout": "02:00:00",
-						"partitionOption": "None"
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
 					},
 					"sink": {
 						"type": "DelimitedTextSink",
@@ -165,11 +175,12 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_sqlserver_IN1680",
+						"referenceName": "DS_CSV_IN1680",
 						"type": "DatasetReference",
 						"parameters": {
-							"schemaname": "KRavi",
-							"tablename": "stg_transaction_mod_IN1680"
+							"container": "adf-module-sep2025",
+							"folder": "SourceFiles",
+							"file": "transaction.csv"
 						}
 					}
 				],

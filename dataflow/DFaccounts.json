@@ -24,23 +24,36 @@
 					"name": "SNKaccountsTgt"
 				}
 			],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "AccountTenure"
+				},
+				{
+					"name": "EffectiveAnnualYield"
+				},
+				{
+					"name": "SharedLiabilityRisk"
+				}
+			],
 			"scriptLines": [
+				"parameters{",
+				"     file as string",
+				"}",
 				"source(output(",
 				"          AccountID as short,",
 				"          CustomerID as short,",
 				"          AccountNumber as string,",
 				"          AccountType as string,",
-				"          OpenDate as string,",
-				"          CloseDate as string,",
+				"          OpenDate as date,",
+				"          CloseDate as date,",
 				"          Status as string,",
 				"          BranchCode as string,",
 				"          Currency as string,",
-				"          InterestRate as double,",
+				"          InterestRate as decimal(10,0),",
 				"          CreditLimit as double,",
 				"          Balance as double,",
 				"          OverdraftLimit as double,",
-				"          IsJointAccount as boolean,",
+				"          IsJointAccount as integer,",
 				"          Channel as string,",
 				"          LastActivityDate as string,",
 				"          created_date as timestamp,",
@@ -51,10 +64,18 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SRCaccountssrc",
-				"SRCaccountssrc sink(allowSchemaDrift: true,",
+				"SRCaccountssrc derive(Account_Tenure = year(CloseDate)-year(OpenDate)) ~> AccountTenure",
+				"AccountTenure derive(EffectiveAnnualYield = (1 + InterestRate/12)*12 - 1) ~> EffectiveAnnualYield",
+				"EffectiveAnnualYield derive(SharedLiabilityRisk = iif(IsJointAccount == 1 && OverdraftLimit > 10000, 'Shared Liability Risk',iif(\r",
+				"    IsJointAccount == 1 && OverdraftLimit <= 10000, 'Joint Account - Normal Risk',iif(\r",
+				"    IsJointAccount == 0 && OverdraftLimit > 10000, 'Single Account - High Exposure',\r",
+				"    'Low Risk')))) ~> SharedLiabilityRisk",
+				"SharedLiabilityRisk sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     partitionFileNames:[($file)],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SNKaccountsTgt"
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SNKaccountsTgt"
 			]
 		}
 	}

@@ -1,9 +1,9 @@
 {
-	"name": "PL_stg_to_tgt_transaction",
+	"name": "PL_acccounts",
 	"properties": {
 		"activities": [
 			{
-				"name": "DF_stg_to_tgt_transaction",
+				"name": "DF_accounts",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "DF_transactions",
+						"referenceName": "DFaccounts",
 						"type": "DataFlowReference",
 						"parameters": {
 							"file": {
@@ -25,15 +25,15 @@
 							}
 						},
 						"datasetParameters": {
-							"SRCTransactionTgt": {
+							"SRCaccountssrc": {
 								"container": "adf-module-sep2025",
-								"folder": "SourceFiles",
-								"file": "transaction.csv"
+								"folder": "StageFiles/IN1680",
+								"file": "stg_account_mod_IN1680.csv"
 							},
-							"SNKtransactiontgt": {
+							"SNKaccountsTgt": {
 								"container": "adf-module-sep2025",
 								"folder": "TargetFiles/IN1680",
-								"file": "Dim_transaction_mod_IN1680.csv"
+								"file": "Dim_account_mod_IN1680.csv"
 							}
 						}
 					},
@@ -45,11 +45,11 @@
 				}
 			},
 			{
-				"name": "CP_tgt_transactions",
+				"name": "CP_stg_to_tgt_accounts",
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "DF_stg_to_tgt_transaction",
+						"activity": "DF_accounts",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -98,7 +98,7 @@
 						"parameters": {
 							"container": "adf-module-sep2025",
 							"folder": "TargetFiles/IN1680",
-							"file": "Dim_transaction_mod_IN1680.csv"
+							"file": "Dim_account_mod_IN1680.csv"
 						}
 					}
 				],
@@ -108,7 +108,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"schemaname": "KRavi",
-							"tablename": "Dim_transaction_mod_IN1680"
+							"tablename": "Dim_account_mod_IN1680"
 						}
 					}
 				]
@@ -117,7 +117,7 @@
 		"parameters": {
 			"file": {
 				"type": "string",
-				"defaultValue": "Dim_transaction_mod_IN1680.csv"
+				"defaultValue": "Dim_account_mod_IN1680.csv"
 			}
 		},
 		"folder": {
