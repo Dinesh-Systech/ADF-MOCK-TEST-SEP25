@@ -108,7 +108,7 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> leftsrcandtgt",
-				"maxtransDate split(TransactionDate>max_date,",
+				"maxtransDate split(isNull(TransactionID),",
 				"     disjoint: true) ~> insertupdate@(insert)",
 				"derivedaudit select(mapColumn(",
 				"          TransactionID,",

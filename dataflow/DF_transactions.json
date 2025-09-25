@@ -1,0 +1,86 @@
+{
+	"name": "DF_transactions",
+	"properties": {
+		"folder": {
+			"name": "stg_to_tgt"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1680",
+						"type": "DatasetReference"
+					},
+					"name": "SRCTransactionTgt"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1680",
+						"type": "DatasetReference"
+					},
+					"name": "SNKtransactiontgt"
+				}
+			],
+			"transformations": [
+				{
+					"name": "surrogateKeytransactionkey"
+				},
+				{
+					"name": "concatDateTime"
+				},
+				{
+					"name": "PreviousBalanceAfterTransaction"
+				},
+				{
+					"name": "chanels"
+				},
+				{
+					"name": "BaseCurrency"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     file as string",
+				"}",
+				"source(output(",
+				"          TransactionID as integer,",
+				"          AccountID as integer,",
+				"          CustomerID as integer,",
+				"          TransactionDate as date,",
+				"          TransactionTime as timestamp,",
+				"          TransactionType as string,",
+				"          Amount as decimal(10,0),",
+				"          BalanceAfterTransaction as decimal(10,0),",
+				"          Currency as string,",
+				"          Channel as string,",
+				"          MerchantCode as string,",
+				"          Location as string,",
+				"          Fee as decimal(10,0),",
+				"          ExchangeRate as decimal(10,0),",
+				"          ApprovalCode as string,",
+				"          FraudFlag as string,",
+				"          Narration as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SRCTransactionTgt",
+				"SRCTransactionTgt keyGenerate(output(transaction_key as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKeytransactionkey",
+				"surrogateKeytransactionkey derive(TransactionDateTime = concat(toString(TransactionDate, 'MMMM dd yyyy'),toString(TransactionTime, 'HH:mm:ss') )) ~> concatDateTime",
+				"concatDateTime derive(PreviousBalanceAfterTransaction = case(BalanceAfterTransaction>Amount, Amount-BalanceAfterTransaction,BalanceAfterTransaction+Amount)) ~> PreviousBalanceAfterTransaction",
+				"PreviousBalanceAfterTransaction filter(Channel == 'Online'|| Channel == 'Mobile'|| Channel == 'Branch') ~> chanels",
+				"chanels derive({BalanceInBaseCurrency } = BalanceAfterTransaction* (Amount*ExchangeRate)) ~> BaseCurrency",
+				"BaseCurrency sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[($file)],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SNKtransactiontgt"
+			]
+		}
+	}
+}
