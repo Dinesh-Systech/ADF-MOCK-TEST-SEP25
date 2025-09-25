@@ -1,5 +1,5 @@
 {
-	"name": "DF_Account_IN1674",
+	"name": "DF_Customers__IN1674",
 	"properties": {
 		"folder": {
 			"name": "SRC_to_STG"
@@ -8,14 +8,108 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"name": "Src"
+					"dataset": {
+						"referenceName": "DS_SourceCSV_IN1674",
+						"type": "DatasetReference"
+					},
+					"name": "SrcCustomers"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_SourceCSV_IN1674",
+						"type": "DatasetReference"
+					},
+					"name": "SinkCustomers"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Transformationcustomers"
+				},
+				{
+					"name": "SelectColumn"
+				}
+			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> Src"
+				"parameters{",
+				"     pipname as string,",
+				"     pipid as string",
+				"}",
+				"source(output(",
+				"          CustomerID as integer,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          Gender as string,",
+				"          DateOfBirth as date,",
+				"          Email as string,",
+				"          Phone as string,",
+				"          AddressLine1 as string,",
+				"          AddressLine2 as string,",
+				"          City as string,",
+				"          State as string,",
+				"          Country as string,",
+				"          PostalCode as integer,",
+				"          MaritalStatus as string,",
+				"          Occupation as string,",
+				"          AnnualIncome as double,",
+				"          RiskCategory as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SrcCustomers",
+				"SrcCustomers derive({created by } = $pipname,",
+				"          {created date} = currentDate(),",
+				"          {updated date} = currentDate(),",
+				"          {updated by} = $pipname) ~> Transformationcustomers",
+				"Transformationcustomers select(mapColumn(",
+				"          CustomerID,",
+				"          FirstName,",
+				"          LastName,",
+				"          Gender,",
+				"          DateOfBirth,",
+				"          Email,",
+				"          Phone,",
+				"          AddressLine1,",
+				"          AddressLine2,",
+				"          City,",
+				"          State,",
+				"          Country,",
+				"          PostalCode,",
+				"          MaritalStatus,",
+				"          Occupation,",
+				"          AnnualIncome,",
+				"          RiskCategory,",
+				"          {created_by } = {created by },",
+				"          created_date = {created date},",
+				"          updated_date = {updated date},",
+				"          updated_by = {updated by}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectColumn",
+				"SelectColumn sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          AccountID as string,",
+				"          CustomerID as string,",
+				"          AccountNumber as string,",
+				"          AccountType as string,",
+				"          OpenDate as string,",
+				"          CloseDate as string,",
+				"          Status as string,",
+				"          BranchCode as string,",
+				"          Currency as string,",
+				"          InterestRate as string,",
+				"          CreditLimit as string,",
+				"          Balance as string,",
+				"          OverdraftLimit as string,",
+				"          IsJointAccount as string,",
+				"          Channel as string,",
+				"          LastActivityDate as string",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SinkCustomers"
 			]
 		}
 	}

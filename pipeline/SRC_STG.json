@@ -1,6 +1,75 @@
 {
 	"name": "SRC_STG",
 	"properties": {
+		"activities": [
+			{
+				"name": "DF_Customers",
+				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_Customers__IN1674",
+						"type": "DataFlowReference",
+						"parameters": {
+							"pipname": {
+								"value": "'@{pipeline().Pipeline}'",
+								"type": "Expression"
+							},
+							"pipid": {
+								"value": "'@{pipeline().RunId}'",
+								"type": "Expression"
+							}
+						},
+						"datasetParameters": {
+							"SrcCustomers": {
+								"filename": "DimCustomer.csv",
+								"folder": "SourceFiles",
+								"container": "adf-module-sep2025"
+							},
+							"SinkCustomers": {
+								"filename": "stg_customes_Mod_IN1674.csv",
+								"folder": "StageFiles/IN1674",
+								"container": "adf-module-sep2025"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"enableStaging": false
+				}
+			}
+		],
+		"folder": {
+			"name": "Module_Test"
+		},
 		"annotations": []
 	}
 }
