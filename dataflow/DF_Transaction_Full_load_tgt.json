@@ -9,19 +9,40 @@
 						"referenceName": "DS_BLOB_IN1677",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "SrcTrans"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_BLOB_IN1677",
+						"type": "DatasetReference"
+					},
+					"name": "SnkFacttransactionmodIN1677"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Transformation"
+				},
+				{
+					"name": "Surtransactionkey"
+				},
+				{
+					"name": "NullHandling"
+				},
+				{
+					"name": "filter1"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          TransactionID as short,",
 				"          AccountID as short,",
 				"          CustomerID as short,",
 				"          TransactionDate as string,",
-				"          TransactionTime as string,",
-				"          TransactionType as string,",
+				"          TransactionTime as date,",
+				"          TransactionType as timestamp,",
 				"          Amount as double,",
 				"          BalanceAfterTransaction as double,",
 				"          Currency as string,",
@@ -40,7 +61,24 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1"
+				"     ignoreNoFilesFound: false) ~> SrcTrans",
+				"SrcTrans derive(TransactionTime = concat(TransactionDate, toString(TransactionTime)),",
+				"          PreviousBalanceAfterTransaction = add(Amount, BalanceAfterTransaction),",
+				"          {BalanceInBaseCurrency } = BalanceAfterTransaction*(Amount*ExchangeRate)) ~> Transformation",
+				"filter1 keyGenerate(output(transaction_key as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> Surtransactionkey",
+				"Surtransactionkey derive() ~> NullHandling",
+				"Transformation filter(Channel=='Online'||Channel=='Mobile'||Channel=='Branch'\r",
+				"\r",
+				"\r",
+				") ~> filter1",
+				"NullHandling sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Fact_transaction_mod_IN1677'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SnkFacttransactionmodIN1677"
 			]
 		}
 	}
