@@ -17,7 +17,24 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "DF_Trans_Incr",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SRCtransaction": {
+								"Container": "adf-module-sep2025",
+								"Directory": "SourceFiles",
+								"File": "transaction.csv"
+							},
+							"TGTtransactions": {
+								"Container": "adf-module-sep2025",
+								"Directory": "StageFiles/IN1685",
+								"File": "tgt_trans.csv"
+							},
+							"SNKtransactions": {
+								"Container": "adf-module-sep2025",
+								"Directory": "StageFiles/IN1685/IN1685_stg",
+								"File": "mod_stg_transaction_IN1685.csv"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
@@ -347,6 +364,75 @@
 							"Container": "adf-module-sep2025",
 							"Directory": "StageFiles/IN1685",
 							"File": "tgt_trans.csv"
+						}
+					}
+				]
+			},
+			{
+				"name": "CP_transactions_blob_sql",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "DF_Trans_Incr",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_CSV_IN1685",
+						"type": "DatasetReference",
+						"parameters": {
+							"Container": "adf-module-sep2025",
+							"Directory": "StageFiles/IN1685/IN1685_stg",
+							"File": "mod_stg_transaction_IN1685.csv"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SqlServerTable",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "RRamesh",
+							"TableName": "mod_stg_transaction_IN1685"
 						}
 					}
 				]
