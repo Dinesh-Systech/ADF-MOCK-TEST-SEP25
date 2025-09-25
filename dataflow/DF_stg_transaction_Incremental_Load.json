@@ -1,6 +1,9 @@
 {
 	"name": "DF_stg_transaction_Incremental_Load",
 	"properties": {
+		"folder": {
+			"name": "source to stage"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [

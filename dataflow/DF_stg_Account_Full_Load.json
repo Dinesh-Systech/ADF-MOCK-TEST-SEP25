@@ -1,0 +1,115 @@
+{
+	"name": "DF_stg_Account_Full_Load",
+	"properties": {
+		"folder": {
+			"name": "Stage to Target"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1684",
+						"type": "DatasetReference"
+					},
+					"name": "SRCStgAccountModIN1684"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1684",
+						"type": "DatasetReference"
+					},
+					"name": "SNKDimAccount"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SrcSelect"
+				},
+				{
+					"name": "selectOrder"
+				},
+				{
+					"name": "surrogateAccountKey"
+				},
+				{
+					"name": "tranasformation"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          AccountID as integer,",
+				"          CustomerID as integer,",
+				"          AccountNumber as string,",
+				"          AccountType as string,",
+				"          OpenDate as date,",
+				"          CloseDate as date,",
+				"          Status as string,",
+				"          BranchCode as string,",
+				"          Currency as string,",
+				"          InterestRate as string,",
+				"          CreditLimit as float,",
+				"          Balance as float,",
+				"          OverdraftLimit as float,",
+				"          IsJointAccount as integer,",
+				"          Channel as string,",
+				"          LastActivityDate as string,",
+				"          {created by} as string,",
+				"          {created date} as date,",
+				"          {updated date} as date,",
+				"          {updated by} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SRCStgAccountModIN1684",
+				"SRCStgAccountModIN1684 select(mapColumn(",
+				"          each(match(true()),",
+				"               \"SRC_\"+$$ = $$)",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SrcSelect",
+				"surrogateAccountKey select(mapColumn(",
+				"          AccountID = SRC_AccountID,",
+				"          account_key,",
+				"          CustomerID = SRC_CustomerID,",
+				"          AccountNumber = SRC_AccountNumber,",
+				"          AccountType = SRC_AccountType,",
+				"          OpenDate = SRC_OpenDate,",
+				"          CloseDate = SRC_CloseDate,",
+				"          Account_Tenure,",
+				"          Status = SRC_Status,",
+				"          BranchCode = SRC_BranchCode,",
+				"          Currency = SRC_Currency,",
+				"          InterestRate = SRC_InterestRate,",
+				"          EffectiveAnnualYield,",
+				"          CreditLimit = SRC_CreditLimit,",
+				"          Balance = SRC_Balance,",
+				"          OverdraftLimit = SRC_OverdraftLimit,",
+				"          IsJointAccount = SRC_IsJointAccount,",
+				"          SharedLiabilityRisk,",
+				"          Channel = SRC_Channel,",
+				"          LastActivityDate = SRC_LastActivityDate,",
+				"          DaysSinceLastActivity,",
+				"          {created by} = {SRC_created by},",
+				"          {created date} = {SRC_created date},",
+				"          {updated date} = {SRC_updated date},",
+				"          {updated by} = {SRC_updated by}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectOrder",
+				"tranasformation keyGenerate(output(account_key as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateAccountKey",
+				"SrcSelect derive() ~> tranasformation",
+				"selectOrder sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Dim_account_mod_IN1684'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SNKDimAccount"
+			]
+		}
+	}
+}

@@ -1,0 +1,423 @@
+{
+	"name": "PL_STG_TGT_Dim_Account",
+	"properties": {
+		"activities": [
+			{
+				"name": "DF_stg_account_Full_Load",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_stg_Account_Full_Load",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SRCStgAccountModIN1684": {
+								"PR_Directory": "StageFiles/IN1684",
+								"PR_Filename": "stg_account_mod_IN1684"
+							},
+							"SNKDimAccount": {
+								"PR_Directory": "TargetFiles/IN1684",
+								"PR_Filename": "Dim_account_mod_IN1684"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "CP_Dim_Account_mod_IN1684_to_SQL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "DF_stg_account_Full_Load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "AccountID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AccountID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "account_key",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "account_key",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "CustomerID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CustomerID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "AccountNumber",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AccountNumber",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "AccountType",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AccountType",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "OpenDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "OpenDate",
+									"type": "Date",
+									"physicalType": "date"
+								}
+							},
+							{
+								"source": {
+									"name": "CloseDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CloseDate",
+									"type": "Date",
+									"physicalType": "date"
+								}
+							},
+							{
+								"source": {
+									"name": "Account_Tenure",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Account_Tenure",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "Status",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Status",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "BranchCode",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "BranchCode",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Currency",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Currency",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "InterestRate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "InterestRate",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 2,
+									"precision": 10
+								}
+							},
+							{
+								"source": {
+									"name": "EffectiveAnnualYield",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EffectiveAnnualYield",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 2,
+									"precision": 10
+								}
+							},
+							{
+								"source": {
+									"name": "CreditLimit",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CreditLimit",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 2,
+									"precision": 10
+								}
+							},
+							{
+								"source": {
+									"name": "Balance",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Balance",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 2,
+									"precision": 10
+								}
+							},
+							{
+								"source": {
+									"name": "OverdraftLimit",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "OverdraftLimit",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 2,
+									"precision": 10
+								}
+							},
+							{
+								"source": {
+									"name": "IsJointAccount",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "IsJointAccount",
+									"type": "Boolean",
+									"physicalType": "bit"
+								}
+							},
+							{
+								"source": {
+									"name": "SharedLiabilityRisk",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SharedLiabilityRisk",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Channel",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Channel",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "LastActivityDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "LastActivityDate",
+									"type": "Date",
+									"physicalType": "date"
+								}
+							},
+							{
+								"source": {
+									"name": "DaysSinceLastActivity",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "DaysSinceLastActivity",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "created by",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "created by",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "created date",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "created date",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "updated date",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "updated date",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "updated by",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "updated by",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_CSV_IN1684",
+						"type": "DatasetReference",
+						"parameters": {
+							"PR_Directory": "TargetFiles/IN1684",
+							"PR_Filename": "Dim_account_mod_IN1684"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL_IN1684",
+						"type": "DatasetReference",
+						"parameters": {
+							"PR_Tablename": "Dim_account_mod_IN1684"
+						}
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "Module test/STG to TGT"
+		},
+		"annotations": []
+	}
+}
