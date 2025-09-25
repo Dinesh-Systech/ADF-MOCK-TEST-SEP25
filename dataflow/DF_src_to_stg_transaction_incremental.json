@@ -31,7 +31,26 @@
 					"name": "SNKstgtransaction"
 				}
 			],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "leftsrcandtgt"
+				},
+				{
+					"name": "insertupdate"
+				},
+				{
+					"name": "selectSrc"
+				},
+				{
+					"name": "selectTgt"
+				},
+				{
+					"name": "maxtransDate"
+				},
+				{
+					"name": "derivedaudit"
+				}
+			],
 			"scriptLines": [
 				"parameters{",
 				"     file as string",
@@ -59,35 +78,76 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SRCsrcTransaction",
 				"source(output(",
-				"          TransactionID as string,",
-				"          AccountID as string,",
-				"          CustomerID as string,",
-				"          TransactionDate as string,",
+				"          TransactionID as integer,",
+				"          AccountID as integer,",
+				"          CustomerID as integer,",
+				"          TransactionDate as date,",
 				"          TransactionTime as string,",
 				"          TransactionType as string,",
-				"          Amount as string,",
-				"          BalanceAfterTransaction as string,",
+				"          Amount as decimal(10,2),",
+				"          BalanceAfterTransaction as decimal(10,2),",
 				"          Currency as string,",
 				"          Channel as string,",
 				"          MerchantCode as string,",
 				"          Location as string,",
-				"          Fee as string,",
-				"          ExchangeRate as string,",
+				"          Fee as decimal(10,2),",
+				"          ExchangeRate as decimal(10,2),",
 				"          ApprovalCode as string,",
-				"          FraudFlag as string,",
+				"          FraudFlag as boolean,",
 				"          Narration as string,",
-				"          created_date as string,",
+				"          created_date as timestamp,",
 				"          created_by as string,",
-				"          updated_date as string,",
+				"          updated_date as timestamp,",
 				"          updated_by as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SRCtgtTransaction",
-				"SRCsrcTransaction sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
+				"SRCsrcTransaction, selectTgt join(TransactionID == t_TransactionID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> leftsrcandtgt",
+				"maxtransDate split(TransactionDate>max_date,",
+				"     disjoint: true) ~> insertupdate@(insert)",
+				"derivedaudit select(mapColumn(",
+				"          TransactionID,",
+				"          AccountID,",
+				"          CustomerID,",
+				"          TransactionDate,",
+				"          TransactionTime,",
+				"          TransactionType,",
+				"          Amount,",
+				"          BalanceAfterTransaction,",
+				"          Currency,",
+				"          Channel,",
+				"          MerchantCode,",
+				"          Location,",
+				"          Fee,",
+				"          ExchangeRate,",
+				"          ApprovalCode,",
+				"          FraudFlag,",
+				"          Narration",
+				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SNKstgtransaction"
+				"     skipDuplicateMapOutputs: true) ~> selectSrc",
+				"SRCtgtTransaction select(mapColumn(",
+				"          t_TransactionID = TransactionID,",
+				"          t_TransactionDate = TransactionDate",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectTgt",
+				"leftsrcandtgt window(max_date = max(t_TransactionDate)) ~> maxtransDate",
+				"insertupdate@insert derive(created_date = currentTimestamp(),",
+				"          update_date = currentTimestamp(),",
+				"          created_by = 'PL_src_to_stg_transaction_IN1680',",
+				"          updated_by = 'PL_src_to_stg_transaction_IN1680') ~> derivedaudit",
+				"selectSrc sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[($file)],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SNKstgtransaction"
 			]
 		}
 	}

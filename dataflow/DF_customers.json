@@ -24,11 +24,7 @@
 					"name": "SNKcustomers"
 				}
 			],
-			"transformations": [
-				{
-					"name": "derivedaudit"
-				}
-			],
+			"transformations": [],
 			"scriptLines": [
 				"parameters{",
 				"     filename as string",
@@ -55,10 +51,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SRCcustomers",
-				"SRCcustomers derive(created_at = currentTimestamp(),",
-				"          updated_at = currentTimestamp(),",
-				"          created_by = 'CP_src_transaction_to_sql_transaction') ~> derivedaudit",
-				"derivedaudit sink(allowSchemaDrift: true,",
+				"SRCcustomers sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:[($filename)],",
 				"     skipDuplicateMapInputs: true,",

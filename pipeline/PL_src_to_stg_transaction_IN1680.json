@@ -5,8 +5,6 @@
 			{
 				"name": "CP_src_transaction_to_sql_transaction",
 				"type": "Copy",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "DF_transaction_incremental",
@@ -53,7 +51,12 @@
 				"inputs": [
 					{
 						"referenceName": "DS_CSV_IN1680",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "adf-module-sep2025",
+							"folder": "StageFiles/IN1680",
+							"file": "stg_transaction_mod_IN1680.csv"
+						}
 					}
 				],
 				"outputs": [
@@ -70,8 +73,6 @@
 			{
 				"name": "DF_transaction_incremental",
 				"type": "ExecuteDataFlow",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "CP_fromsql",
@@ -92,6 +93,12 @@
 					"dataflow": {
 						"referenceName": "DF_src_to_stg_transaction_incremental",
 						"type": "DataFlowReference",
+						"parameters": {
+							"file": {
+								"value": "'@{pipeline().parameters.file}'",
+								"type": "Expression"
+							}
+						},
 						"datasetParameters": {
 							"SRCsrcTransaction": {
 								"container": "adf-module-sep2025",
@@ -100,7 +107,7 @@
 							},
 							"SRCtgtTransaction": {
 								"container": "adf-module-sep2025",
-								"folder": "StageFiles/IN1680",
+								"folder": "StageFilestgt/IN1680",
 								"file": "stg_transaction_mod_IN1680.csv"
 							},
 							"SNKstgtransaction": {
@@ -179,6 +186,12 @@
 				]
 			}
 		],
+		"parameters": {
+			"file": {
+				"type": "string",
+				"defaultValue": "stg_transaction_mod_IN1680.csv"
+			}
+		},
 		"folder": {
 			"name": "Module/src_to_stg"
 		},
