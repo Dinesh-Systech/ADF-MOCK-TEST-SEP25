@@ -19,26 +19,154 @@
 					"name": "TgtTran"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_BLOB_IN1677",
+						"type": "DatasetReference"
+					},
+					"name": "SnkStgtransactionmodIN1677"
+				}
+			],
 			"transformations": [
 				{
-					"name": "select1"
+					"name": "selectColumns"
 				},
 				{
-					"name": "select2"
+					"name": "AggMaxTranDate"
+				},
+				{
+					"name": "selectTgt"
+				},
+				{
+					"name": "joinSrcTgt"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "TransformationAudit1"
+				},
+				{
+					"name": "TransformationAudit2"
+				},
+				{
+					"name": "unionSplits"
+				},
+				{
+					"name": "selectColumn"
 				}
 			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          TransactionID as integer,",
+				"          AccountID as integer,",
+				"          CustomerID as integer,",
+				"          TransactionDate as date,",
+				"          TransactionTime as string,",
+				"          TransactionType as string,",
+				"          Amount as double,",
+				"          BalanceAfterTransaction as double,",
+				"          Currency as string,",
+				"          Channel as string,",
+				"          MerchantCode as string,",
+				"          Location as string,",
+				"          Fee as double,",
+				"          ExchangeRate as double,",
+				"          ApprovalCode as string,",
+				"          FraudFlag as boolean,",
+				"          Narration as string,",
+				"          {created_by } as string,",
+				"          created_date as timestamp,",
+				"          updated_date as timestamp,",
+				"          updated_by as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SrcTran",
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          TransactionID as integer,",
+				"          AccountID as string,",
+				"          CustomerID as string,",
+				"          TransactionDate as date,",
+				"          TransactionTime as string,",
+				"          TransactionType as string,",
+				"          Amount as string,",
+				"          BalanceAfterTransaction as string,",
+				"          Currency as string,",
+				"          Channel as string,",
+				"          MerchantCode as string,",
+				"          Location as string,",
+				"          Fee as string,",
+				"          ExchangeRate as string,",
+				"          ApprovalCode as string,",
+				"          FraudFlag as string,",
+				"          Narration as string,",
+				"          created_date as string,",
+				"          created_by as string,",
+				"          updated_date as string,",
+				"          updated_by as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> TgtTran",
-				"SrcTran select(skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"TgtTran select(skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select2"
+				"TgtTran select(mapColumn(",
+				"          TransactionID,",
+				"          TransactionDate",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectColumns",
+				"selectColumns aggregate(groupBy(TransactionID),",
+				"     TransactionDate = max(TransactionDate)) ~> AggMaxTranDate",
+				"AggMaxTranDate select(mapColumn(",
+				"          each(match(true()),",
+				"               'tgt_'+$$ = $$)",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectTgt",
+				"SrcTran, selectTgt join(TransactionID == tgt_TransactionID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinSrcTgt",
+				"joinSrcTgt split(isNull(tgt_TransactionID),",
+				"     TransactionID==tgt_TransactionID && TransactionDate>tgt_TransactionDate,",
+				"     disjoint: false) ~> split1@(Insert, Update)",
+				"split1@Insert derive(created_date = currentTimestamp()) ~> TransformationAudit1",
+				"split1@Update derive(updated_date = currentTimestamp(),",
+				"          updated_by = {created_by }) ~> TransformationAudit2",
+				"TransformationAudit1 union(byName: true)~> unionSplits",
+				"unionSplits select(mapColumn(",
+				"          TransactionID,",
+				"          AccountID,",
+				"          CustomerID,",
+				"          TransactionDate,",
+				"          TransactionTime,",
+				"          TransactionType,",
+				"          Amount,",
+				"          BalanceAfterTransaction,",
+				"          Currency,",
+				"          Channel,",
+				"          MerchantCode,",
+				"          Location,",
+				"          Fee,",
+				"          ExchangeRate,",
+				"          ApprovalCode,",
+				"          FraudFlag,",
+				"          Narration,",
+				"          {created_by },",
+				"          created_date,",
+				"          updated_date,",
+				"          updated_by",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectColumn",
+				"selectColumn sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['stg_transaction_mod_IN1677'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SnkStgtransactionmodIN1677"
 			]
 		}
 	}

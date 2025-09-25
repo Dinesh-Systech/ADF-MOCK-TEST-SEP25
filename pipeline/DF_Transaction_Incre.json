@@ -1,0 +1,49 @@
+{
+	"name": "DF_Transaction_Incre",
+	"properties": {
+		"activities": [
+			{
+				"name": "DF_Transaction_incre",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_Transaction_incremental",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SrcTran": {
+								"foldername": "StageFiles/IN1677",
+								"filename": "stg_FactTransaction_mod_IN1677.csv"
+							},
+							"TgtTran": {
+								"foldername": "StageFiles/IN1677",
+								"filename": "stg_transaction_mod_IN1677"
+							},
+							"SnkStgtransactionmodIN1677": {
+								"foldername": "StageFiles/IN1677",
+								"filename": "stg_transaction_mod_IN1677"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "MODULE_TEST_IN1677/SRC TO STG"
+		},
+		"annotations": []
+	}
+}
