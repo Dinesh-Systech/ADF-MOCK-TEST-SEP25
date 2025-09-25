@@ -19,7 +19,15 @@
 					"name": "TgtCustomer"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_BLOB_IN1677",
+						"type": "DatasetReference"
+					},
+					"name": "SnkDimcustomersmodin1677"
+				}
+			],
 			"transformations": [
 				{
 					"name": "selectColumns1"
@@ -32,6 +40,30 @@
 				},
 				{
 					"name": "split1"
+				},
+				{
+					"name": "TransformationAudit1"
+				},
+				{
+					"name": "TransformationAudit2"
+				},
+				{
+					"name": "unionSplits"
+				},
+				{
+					"name": "selectColumns3"
+				},
+				{
+					"name": "NullHandling"
+				},
+				{
+					"name": "SurCustomerkey"
+				},
+				{
+					"name": "Transformation"
+				},
+				{
+					"name": "Transformation2"
 				}
 			],
 			"scriptLines": [
@@ -40,7 +72,7 @@
 				"          FirstName as string,",
 				"          LastName as string,",
 				"          Gender as string,",
-				"          DateOfBirth as date,",
+				"          DateOfBirth as timestamp,",
 				"          Email as string,",
 				"          Phone as string,",
 				"          AddressLine1 as string,",
@@ -55,7 +87,7 @@
 				"          RiskCategory as string,",
 				"          {created_by } as string,",
 				"          created_date as timestamp,",
-				"          updated_date as string,",
+				"          updated_date as timestamp,",
 				"          updated_by as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
@@ -68,7 +100,7 @@
 				"          LastName as string,",
 				"          FullName as string,",
 				"          Gender as string,",
-				"          DateOfBirth as date,",
+				"          DateOfBirth as timestamp,",
 				"          Age as string,",
 				"          Email as string,",
 				"          Phone as string,",
@@ -129,7 +161,61 @@
 				"     broadcast: 'auto')~> joinSrcTgt",
 				"joinSrcTgt split(isNull(tgt_CustomerID)||(CustomerID==tgt_CustomerID && State!=tgt_State ),",
 				"     (CustomerID==tgt_CustomerID && State!=tgt_State ),",
-				"     disjoint: false) ~> split1@(insert, update)"
+				"     disjoint: true) ~> split1@(insert, update)",
+				"split1@insert derive(created_date = currentTimestamp()) ~> TransformationAudit1",
+				"split1@update derive(updated_date = currentTimestamp(),",
+				"          updated_by = {created_by }) ~> TransformationAudit2",
+				"TransformationAudit1, TransformationAudit2 union(byName: true)~> unionSplits",
+				"unionSplits select(mapColumn(",
+				"          CustomerID,",
+				"          FirstName,",
+				"          LastName,",
+				"          Gender,",
+				"          DateOfBirth,",
+				"          Email,",
+				"          Phone,",
+				"          AddressLine1,",
+				"          AddressLine2,",
+				"          City,",
+				"          State,",
+				"          Country,",
+				"          PostalCode,",
+				"          MaritalStatus,",
+				"          Occupation,",
+				"          AnnualIncome,",
+				"          RiskCategory,",
+				"          {created_by },",
+				"          created_date,",
+				"          updated_date,",
+				"          updated_by",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectColumns3",
+				"SurCustomerkey derive(each(match(type=='string'), $$ = iif(isNull($$)||lower($$)=='null', 'Unk', $$)),",
+				"          each(match(type=='integer'), $$ = iifNull($$, 0, $$)),",
+				"          each(match(type=='timestamp'), $$ = iifNull($$, toDate('1990-01-01 00:00:00'), $$))) ~> NullHandling",
+				"Transformation2 keyGenerate(output(customer_key as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> SurCustomerkey",
+				"selectColumns3 derive(Gender = iif(Gender=='M', 'Male', iif(Gender=='F', 'Female', iif(Gender=='O', 'Others', 'unk'))),",
+				"          Age = \r",
+				"monthsBetween(DateOfBirth,currentDate()),",
+				"          AnnualIncome = toInteger(AnnualIncome),",
+				"          sector = \r",
+				"iif(Occupation=='Teacher', 'Education', iif(Occupation=='Business analyst' ||Occupation==' Manager', 'IT', \r",
+				"iif(Occupation=='Engineer', 'Engineering', iif(Occupation=='Doctor', 'Medicine', iif(Occupation=='Banker', 'Finance', \r",
+				"iif(Occupation=='Lawyer', 'Law', 'unk'))))))) ~> Transformation",
+				"Transformation derive(FullName = case(\r",
+				"    Gender=='Male', concat('Mr.',FirstName,' ',LastName), \r",
+				"    Gender=='Female' && MaritalStatus=='Single'||MaritalStatus=='Divorced'||MaritalStatus=='Widowed',concat('Ms.',FirstName,' ',LastName),\r",
+				"    Gender=='Female' && MaritalStatus== 'Married',concat('Mrs.',FirstName,' ',LastName),'Null'\r",
+				")) ~> Transformation2",
+				"NullHandling sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Dim_customers_mod_in1677'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SnkDimcustomersmodin1677"
 			]
 		}
 	}
