@@ -1,5 +1,5 @@
 {
-	"name": "DF_SRC_TO_TGT_CUSTOMERS_IN1689",
+	"name": "DF_SRC_TO_TGT_TRANSACTION_IN1689",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -9,7 +9,7 @@
 						"referenceName": "DS_SRC_TO_TGT_IN1689",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "SRCtransaction"
 				}
 			],
 			"sinks": [
@@ -18,12 +18,12 @@
 						"referenceName": "DS_SRC_TO_TGT_IN1689",
 						"type": "DatasetReference"
 					},
-					"name": "SNKcustomers"
+					"name": "SNKtransaction"
 				}
 			],
 			"transformations": [
 				{
-					"name": "DCcustomers"
+					"name": "DCtransaction"
 				}
 			],
 			"scriptLines": [
@@ -48,12 +48,12 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1",
-				"source1 derive({created_by } = 'IN1689',",
+				"     ignoreNoFilesFound: false) ~> SRCtransaction",
+				"SRCtransaction derive({created_by } = 'IN1689',",
 				"          created_date = currentTimestamp(),",
 				"          updated_date = toTimestamp(null()),",
-				"          updated_by = toString(null())) ~> DCcustomers",
-				"DCcustomers sink(allowSchemaDrift: true,",
+				"          updated_by = toString(null())) ~> DCtransaction",
+				"DCtransaction sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     partitionFileNames:['stg_customers_MOD_IN1689'],",
 				"     skipDuplicateMapInputs: true,",
@@ -81,7 +81,7 @@
 				"          updated_date,",
 				"          updated_by",
 				"     ),",
-				"     partitionBy('hash', 1)) ~> SNKcustomers"
+				"     partitionBy('hash', 1)) ~> SNKtransaction"
 			]
 		}
 	}
