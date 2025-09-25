@@ -1,5 +1,5 @@
 {
-	"name": "DF_Transaction_incremental",
+	"name": "DF_Transaction_incremental_Stg",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {

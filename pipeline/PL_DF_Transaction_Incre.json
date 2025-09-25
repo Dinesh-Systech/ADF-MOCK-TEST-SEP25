@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "DF_Transaction_incremental",
+						"referenceName": "DF_Transaction_incremental_Stg",
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"SrcTran": {
