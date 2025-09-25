@@ -5,13 +5,13 @@
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
-			"server": "SSIC-SQL_01",
+			"server": "SSIC-SQL-01",
 			"database": "ADF_Training",
-			"encrypt": "mandatory",
+			"encrypt": "optional",
 			"trustServerCertificate": true,
 			"authenticationType": "SQL",
-			"userName": "CKumaram",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIwODY0ZWMwYi00N2M3LTRhMmUtODhkNC1hZTgzZDMyMjNlZGYiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"userName": "I2025_CKumaram",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJiYjAyNWI2MS02YWNkLTRiOTAtODhiNy1kNzZhNTU5YjMzYjUiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "SHIR-OnPrem-SQL",
