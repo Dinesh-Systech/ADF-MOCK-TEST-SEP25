@@ -1,0 +1,63 @@
+{
+	"name": "DF_SRC_TO_TGT_CUSTOMERS_IN1689",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_SRC_TO_TGT_IN1689",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_SRC_TO_TGT_IN1689",
+						"type": "DatasetReference"
+					},
+					"name": "SNKcustomers"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DCcustomers"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CustomerID as integer,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          Gender as string,",
+				"          DateOfBirth as string,",
+				"          Email as string,",
+				"          Phone as string,",
+				"          AddressLine1 as string,",
+				"          AddressLine2 as string,",
+				"          City as string,",
+				"          State as string,",
+				"          Country as string,",
+				"          PostalCode as integer,",
+				"          MaritalStatus as string,",
+				"          Occupation as string,",
+				"          AnnualIncome as double,",
+				"          RiskCategory as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 derive({created_by } = 'IN1689',",
+				"          created_date = currentTimestamp(),",
+				"          updated_date = toTimestamp(null()),",
+				"          updated_by = toString(null())) ~> DCcustomers",
+				"DCcustomers sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SNKcustomers"
+			]
+		}
+	}
+}
