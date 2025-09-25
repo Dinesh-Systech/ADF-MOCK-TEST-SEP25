@@ -5,8 +5,6 @@
 			{
 				"name": "DF_Trans_Incr",
 				"type": "ExecuteDataFlow",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -31,6 +29,8 @@
 			{
 				"name": "CP_trans_sql_blob",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -68,9 +68,9 @@
 									"physicalType": "int"
 								},
 								"sink": {
+									"name": "TransactionID",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 1
+									"physicalType": "String"
 								}
 							},
 							{
@@ -80,9 +80,9 @@
 									"physicalType": "int"
 								},
 								"sink": {
+									"name": "AccountID",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 2
+									"physicalType": "String"
 								}
 							},
 							{
@@ -92,9 +92,9 @@
 									"physicalType": "int"
 								},
 								"sink": {
+									"name": "CustomerID",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 3
+									"physicalType": "String"
 								}
 							},
 							{
@@ -104,9 +104,9 @@
 									"physicalType": "date"
 								},
 								"sink": {
+									"name": "TransactionDate",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 4
+									"physicalType": "String"
 								}
 							},
 							{
@@ -116,9 +116,9 @@
 									"physicalType": "time"
 								},
 								"sink": {
+									"name": "TransactionTime",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 5
+									"physicalType": "String"
 								}
 							},
 							{
@@ -128,9 +128,9 @@
 									"physicalType": "varchar"
 								},
 								"sink": {
+									"name": "TransactionType",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 6
+									"physicalType": "String"
 								}
 							},
 							{
@@ -142,9 +142,9 @@
 									"precision": 10
 								},
 								"sink": {
+									"name": "Amount",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 7
+									"physicalType": "String"
 								}
 							},
 							{
@@ -156,9 +156,9 @@
 									"precision": 10
 								},
 								"sink": {
+									"name": "BalanceAfterTransaction",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 8
+									"physicalType": "String"
 								}
 							},
 							{
@@ -168,9 +168,9 @@
 									"physicalType": "varchar"
 								},
 								"sink": {
+									"name": "Currency",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 9
+									"physicalType": "String"
 								}
 							},
 							{
@@ -180,9 +180,9 @@
 									"physicalType": "varchar"
 								},
 								"sink": {
+									"name": "Channel",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 10
+									"physicalType": "String"
 								}
 							},
 							{
@@ -192,9 +192,9 @@
 									"physicalType": "varchar"
 								},
 								"sink": {
+									"name": "MerchantCode",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 11
+									"physicalType": "String"
 								}
 							},
 							{
@@ -204,9 +204,9 @@
 									"physicalType": "varchar"
 								},
 								"sink": {
+									"name": "Location",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 12
+									"physicalType": "String"
 								}
 							},
 							{
@@ -218,9 +218,9 @@
 									"precision": 10
 								},
 								"sink": {
+									"name": "Fee",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 13
+									"physicalType": "String"
 								}
 							},
 							{
@@ -232,9 +232,9 @@
 									"precision": 10
 								},
 								"sink": {
+									"name": "ExchangeRate",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 14
+									"physicalType": "String"
 								}
 							},
 							{
@@ -244,9 +244,9 @@
 									"physicalType": "varchar"
 								},
 								"sink": {
+									"name": "ApprovalCode",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 15
+									"physicalType": "String"
 								}
 							},
 							{
@@ -256,9 +256,9 @@
 									"physicalType": "bit"
 								},
 								"sink": {
+									"name": "FraudFlag",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 16
+									"physicalType": "String"
 								}
 							},
 							{
@@ -268,9 +268,9 @@
 									"physicalType": "varchar"
 								},
 								"sink": {
+									"name": "Narration",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 17
+									"physicalType": "String"
 								}
 							},
 							{
@@ -280,9 +280,9 @@
 									"physicalType": "datetime"
 								},
 								"sink": {
+									"name": "created_date",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 18
+									"physicalType": "String"
 								}
 							},
 							{
@@ -292,9 +292,9 @@
 									"physicalType": "varchar"
 								},
 								"sink": {
+									"name": "created_by",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 19
+									"physicalType": "String"
 								}
 							},
 							{
@@ -304,9 +304,9 @@
 									"physicalType": "datetime"
 								},
 								"sink": {
+									"name": "updated_date",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 20
+									"physicalType": "String"
 								}
 							},
 							{
@@ -316,9 +316,9 @@
 									"physicalType": "varchar"
 								},
 								"sink": {
+									"name": "updated_by",
 									"type": "String",
-									"physicalType": "String",
-									"ordinal": 21
+									"physicalType": "String"
 								}
 							}
 						],
