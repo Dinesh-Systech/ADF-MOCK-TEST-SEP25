@@ -1,0 +1,49 @@
+{
+	"name": "PL_DF_Customer_SCD2_tgt",
+	"properties": {
+		"activities": [
+			{
+				"name": "DF_Customer_SCD2_tgt",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_Customer_SCD2_Tgt",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SrcCustomer": {
+								"foldername": "StageFiles/IN1677",
+								"filename": "stg_DimCustomer_mod_IN1677.csv"
+							},
+							"TgtCustomer": {
+								"foldername": "TargetFiles/IN1677",
+								"filename": "Dim_customers_mod_in1677"
+							},
+							"SnkDimcustomersmodin1677": {
+								"foldername": "TargetFiles/IN1677",
+								"filename": "Dim_customers_mod_in1677"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "MODULE_TEST_IN1677/STG TO TGT"
+		},
+		"annotations": []
+	}
+}
