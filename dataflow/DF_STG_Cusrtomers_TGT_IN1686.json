@@ -1,0 +1,108 @@
+{
+	"name": "DF_STG_Cusrtomers_TGT_IN1686",
+	"properties": {
+		"folder": {
+			"name": "STG_TGT"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1686",
+						"type": "DatasetReference"
+					},
+					"name": "SRCCustomers"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1686",
+						"type": "DatasetReference"
+					},
+					"name": "TGTCustomers"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1686",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "alterRowInsert"
+				},
+				{
+					"name": "alterRowUpdate"
+				},
+				{
+					"name": "auditColumnInsert"
+				},
+				{
+					"name": "auditColumnUpdate"
+				},
+				{
+					"name": "union1"
+				},
+				{
+					"name": "HandlingNull"
+				},
+				{
+					"name": "Transformations"
+				},
+				{
+					"name": "select3"
+				}
+			],
+			"scriptLines": [
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SRCCustomers",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> TGTCustomers",
+				"SRCCustomers select(skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"TGTCustomers select(skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select1 join(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 split(ERROR_FUNCTION(''),",
+				"     disjoint: false) ~> split1@(Insert, Update)",
+				"split1@Insert alterRow() ~> alterRowInsert",
+				"split1@Update alterRow() ~> alterRowUpdate",
+				"alterRowInsert derive() ~> auditColumnInsert",
+				"alterRowUpdate derive() ~> auditColumnUpdate",
+				"auditColumnInsert, auditColumnUpdate union(byName: true)~> union1",
+				"union1 derive() ~> HandlingNull",
+				"HandlingNull derive() ~> Transformations",
+				"Transformations select(skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"select3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[''],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}
