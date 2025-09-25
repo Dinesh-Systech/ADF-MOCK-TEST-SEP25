@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Data flow1",
+				"name": "DF_Transaction_tgt_fullload",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -37,11 +37,11 @@
 				}
 			},
 			{
-				"name": "Copy data1",
+				"name": "CD_TranTgt_Blob_Onprem",
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "Data flow1",
+						"activity": "DF_Transaction_tgt_fullload",
 						"dependencyConditions": [
 							"Succeeded"
 						]
