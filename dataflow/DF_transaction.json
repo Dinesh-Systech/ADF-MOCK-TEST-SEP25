@@ -15,7 +15,15 @@
 					"name": "SRCtransactions"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV_IN1685",
+						"type": "DatasetReference"
+					},
+					"name": "SNKtransactions"
+				}
+			],
 			"transformations": [
 				{
 					"name": "SELECTsrc"
@@ -23,24 +31,33 @@
 				{
 					"name": "NULL",
 					"description": "null"
+				},
+				{
+					"name": "TRANSFORMATIONS"
+				},
+				{
+					"name": "SURROGATEtrans"
+				},
+				{
+					"name": "FILTERchannel"
 				}
 			],
 			"scriptLines": [
 				"source(output(",
-				"          TransactionID as short,",
-				"          AccountID as short,",
-				"          CustomerID as short,",
+				"          TransactionID as integer,",
+				"          AccountID as integer,",
+				"          CustomerID as integer,",
 				"          TransactionDate as date,",
-				"          TransactionTime as string,",
+				"          TransactionTime as timestamp 'MM/dd/yyyy HH:mm:ss',",
 				"          TransactionType as string,",
-				"          Amount as double,",
-				"          BalanceAfterTransaction as double,",
+				"          Amount as decimal(10,2),",
+				"          BalanceAfterTransaction as decimal(10,2),",
 				"          Currency as string,",
 				"          Channel as string,",
 				"          MerchantCode as string,",
 				"          Location as string,",
-				"          Fee as double,",
-				"          ExchangeRate as double,",
+				"          Fee as decimal(10,2),",
+				"          ExchangeRate as decimal(10,2),",
 				"          ApprovalCode as string,",
 				"          FraudFlag as boolean,",
 				"          Narration as string,",
@@ -53,32 +70,45 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SRCtransactions",
 				"SRCtransactions select(mapColumn(",
+				"          TransactionID,",
 				"          AccountID,",
 				"          CustomerID,",
-				"          AccountNumber,",
-				"          AccountType,",
-				"          OpenDate,",
-				"          CloseDate,",
-				"          Status,",
-				"          BranchCode,",
+				"          TransactionDate,",
+				"          TransactionTime,",
+				"          TransactionType,",
+				"          Amount,",
+				"          BalanceAfterTransaction,",
 				"          Currency,",
-				"          InterestRate,",
-				"          CreditLimit,",
-				"          Balance,",
-				"          OverdraftLimit,",
-				"          IsJointAccount,",
 				"          Channel,",
-				"          LastActivityDate,",
-				"          created_date = {25-09-2025 14:16:3316},",
-				"          created_by = PL_SRC_STG17,",
-				"          updated_date = {25-09-2025 14:16:3318},",
-				"          updated_by = PL_SRC_STG19",
+				"          MerchantCode,",
+				"          Location,",
+				"          Fee,",
+				"          ExchangeRate,",
+				"          ApprovalCode,",
+				"          FraudFlag,",
+				"          Narration,",
+				"          created_date,",
+				"          created_by,",
+				"          updated_date,",
+				"          updated_by",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SELECTsrc",
 				"SELECTsrc derive(each(match(type=='string'), $$ = iifNull($$, 'UNK')),",
 				"          each(match(type=='integer'), $$ = iifNull($#, 0)),",
-				"          each(match(type=='timestamp'), $$ = iifNull($$, toTimestamp('1900-01-01 00:00:00', 'dd-MM-yyyy 00:00:00')))) ~> NULL"
+				"          each(match(type=='timestamp'), $$ = iifNull($$, toTimestamp('1900-01-01 00:00:00', 'dd-MM-yyyy 00:00:00')))) ~> NULL",
+				"NULL derive(TransactionDateTime = concat(toString(TransactionDate), toString(TransactionTime)),",
+				"          PreviousBalance = add(Amount, BalanceAfterTransaction)) ~> TRANSFORMATIONS",
+				"FILTERchannel keyGenerate(output(transaction_key as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> SURROGATEtrans",
+				"TRANSFORMATIONS filter((Channel == 'Online') || (Channel == 'Mobile') || (Channel == 'Branch')) ~> FILTERchannel",
+				"SURROGATEtrans sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['mod_fct_transactions_IN1685.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SNKtransactions"
 			]
 		}
 	}
