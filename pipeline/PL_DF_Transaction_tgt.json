@@ -15,12 +15,93 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_Transaction_Full_load_tgt",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SrcTrans": {
+								"foldername": "StageFiles/IN1677",
+								"filename": "stg_transaction_mod_IN1677"
+							},
+							"SnkFacttransactionmodIN1677": {
+								"foldername": "TargetFiles/IN1677",
+								"filename": "Fact_transaction_mod_IN1677"
+							}
+						}
+					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
 					},
 					"traceLevel": "Fine"
 				}
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Data flow1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_BLOB_IN1677",
+						"type": "DatasetReference",
+						"parameters": {
+							"foldername": "TargetFiles/IN1677",
+							"filename": "Fact_transaction_mod_IN1677"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SqlServer_OnPrem_IN1677",
+						"type": "DatasetReference",
+						"parameters": {
+							"TABLE": "Fact_transaction_mod_IN1677"
+						}
+					}
+				]
 			}
 		],
 		"folder": {
