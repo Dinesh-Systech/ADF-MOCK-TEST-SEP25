@@ -1,0 +1,21 @@
+{
+	"name": "LS_OnPrem_IN1675",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "SSIC-SQL-01",
+			"database": "ADF_Training",
+			"encrypt": "mandatory",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "I2025_DMuthuku",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI4ZWNiNzYyYS1hN2Q2LTQ2MTMtYTg2NS02ZTc2NjE3MmI3MGYiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "SHIR-OnPrem-SQL",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
